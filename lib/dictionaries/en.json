@@ -1,0 +1,12 @@
+{
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "candidates": "Candidates",
+    "stats": "Statistics"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error"
+  }
+}

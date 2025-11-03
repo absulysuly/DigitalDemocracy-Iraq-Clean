@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Candidate } from '@/lib/types';
 import { Locale } from '@/lib/i18n-config';
-import { Landmark, UserTie, CheckCircle } from 'lucide-react';
+import { Landmark, User, CheckCircle } from 'lucide-react';
 import React from 'react';
 
 type CandidateCardProps = {
@@ -33,7 +33,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, dictionary, la
               <span>{candidate.governorate}</span>
             </div>
             <div className="flex items-center gap-2">
-              <UserTie className="h-4 w-4" />
+              <User className="h-4 w-4" />
               <span>{candidate.party}</span>
             </div>
           </div>

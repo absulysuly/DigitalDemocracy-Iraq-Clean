@@ -1,4 +1,4 @@
-import { HijriDate } from '@formkit/hijri-date';
+import { HijriDate } from 'hijri-date-converter';
 
 export function isRamadan(): boolean {
   try {
