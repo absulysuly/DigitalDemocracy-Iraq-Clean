@@ -1,9 +1,10 @@
-# Cloudflare Pages Configuration  
-name = "digitaldemocracy-iraq"
+name = "digital-democracy-iraq"
 compatibility_date = "2024-11-04"
-pages_build_output_dir = ".open-next/cloudflare"
 
-[build]
-command = "npm run build:cloudflare"
+[pages]
+build_command = "npm run build"
 output_dir = ".open-next/cloudflare"
 
+# For environment variables, use:
+# [env.production.vars]
+# MY_VARIABLE = "value"
