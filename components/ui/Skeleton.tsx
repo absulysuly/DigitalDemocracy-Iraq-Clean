@@ -4,6 +4,8 @@ export function Skeleton({ className = "" }: { className?: string }) {
   )
 }
 
+export default Skeleton;
+
 export function SkeletonCard() {
   return (
     <div className="animate-pulse bg-gray-200 rounded-lg p-4 space-y-3">
