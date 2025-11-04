@@ -1,1 +1,0 @@
-"use strict";exports.id=550,exports.ids=[550],exports.modules={26550:o=>{o.exports=JSON.parse('{"navigation":{"home":"Home","about":"About","candidates":"Candidates","stats":"Statistics"},"common":{"loading":"Loading...","error":"Error"}}')}};
