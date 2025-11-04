@@ -44,8 +44,8 @@ export default async function CandidatesPage({
   const { data: candidates, total } = await fetchCandidates({
     page: currentPage,
     limit: limit,
-    query,
-    governorate,
+    search: query,
+    province: governorate,
     gender,
   });
 

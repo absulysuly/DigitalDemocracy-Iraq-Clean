@@ -5,11 +5,12 @@ import Feed from '@/components/social/Feed';
 import { fetchCandidateById } from '@/lib/api';
 import Image from 'next/image';
 import { Post } from '@/lib/types';
+import { Locale } from '@/lib/i18n-config';
 
 export default async function CandidatePage({ 
   params 
 }: { 
-  params: { id: string; lang: string } 
+  params: { id: string; lang: Locale } 
 }) {
   const candidate = await fetchCandidateById(params.id);
   if (!candidate) notFound();
