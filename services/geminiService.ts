@@ -3,12 +3,17 @@
  * Generates a social media post by calling our internal API route.
  * The prompt is tailored to create content that is witty, culturally relevant to Iraq,
  * and suitable for a young audience.
+ * @param topic An optional topic for the generated post.
  * @returns A promise that resolves to the generated post content as a string.
  */
-export const generateSocialPost = async (): Promise<string> => {
+export const generateSocialPost = async (topic?: string): Promise<string> => {
     try {
         const response = await fetch('/api/generate-post', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ topic }),
         });
 
         if (!response.ok) {
