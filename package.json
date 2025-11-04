@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
+    "@google/genai": "^1.28.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "hijri-date-converter": "^1.0.2",
