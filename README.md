@@ -1,97 +1,93 @@
 # Digital Diwan - Iraqi Social Election Platform (Next.js 14)
 
-This is a modern, multilingual (English, Arabic, Kurdish), and responsive web application for fostering civic engagement around the Iraqi elections, built with Next.js 14 and the App Router. It's designed to feel like a social media platform, making democracy feel accessible and engaging for a new generation.
+This is a modern, multilingual (English, Arabic, Kurdish), and responsive web application for fostering civic engagement around the Iraqi elections, built with Next.js 14 and the App Router.
 
-## Tech Stack
+## 🔴 CRITICAL: Before You Deploy
 
-- **Framework**: Next.js 14 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **AI**: Google Gemini API
-- **Animations**: Framer Motion
-- **UI Icons**: Lucide React
-- **Internationalization (i18n)**: Next.js Middleware with JSON dictionaries
-- **Theme**: Dark/Light mode + special Ramadan mode with `next-themes`
-- **Date Formatting**: `date-fns`
+The most common deployment error is a mismatch between `package.json` and `package-lock.json`. To fix this permanently before every deployment, you **MUST** run the following commands locally:
 
-## Project Structure
+1.  **Delete old files** to ensure a clean slate:
+    ```bash
+    rm -rf node_modules package-lock.json
+    ```
 
-- **`app/[lang]`**: Dynamic routes for i18n. All pages are nested here.
-  - **`layout.tsx`**: The root layout, including Navbar, Footer, and providers.
-  - **`page.tsx`**: The Home Page (Social Feed).
-  - **`candidates/page.tsx`**: The main candidate browsing page with filtering.
-  - **`candidates/[id]/page.tsx`**: The dynamic page for a single candidate's profile.
-- **`components`**: Reusable React components, organized by feature (layout, social, election, ui).
-- **`lib`**: Core logic, utilities, and API communication.
-  - **`api.ts`**: Functions for fetching data from the backend.
-  - **`types.ts`**: TypeScript interfaces for all data models.
-  - **`i18n-config.ts`**: Configuration for supported locales.
-  - **`dictionaries.ts`**: Server-side function to load translation files.
-- **`dictionaries`**: JSON files for English (`en.json`), Arabic (`ar.json`), and Kurdish (`ku.json`) translations.
-- **`middleware.ts`**: Handles automatic locale detection and URL rewriting for i18n.
-- **`public`**: Static assets like images.
+2.  **Install dependencies and generate a new lock file**: This command reads your `package.json` and creates a perfectly synced `package-lock.json`.
+    ```bash
+    npm install
+    ```
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v18.17 or later)
-- npm, yarn, or pnpm
-
-### 1. Setup Environment Variables
-
-Create a file named `.env.local` in the root of the project and add the following variables:
-
-```dotenv
-NEXT_PUBLIC_API_BASE_URL=https://hamlet-unified-complete-2027-production.up.railway.app
-NEXT_PUBLIC_BACKUP_API=https://winter-leaf-f532.safaribosafar.workers.dev
-NEXT_PUBLIC_API_KEY="YOUR_GEMINI_API_KEY"
-```
-
-- `NEXT_PUBLIC_API_BASE_URL`: The URL for the backend data API.
-- `NEXT_PUBLIC_BACKUP_API`: The fallback API URL (e.g., from Cloudflare Workers) to use if the primary API fails.
-- `NEXT_PUBLIC_API_KEY`: **Required for AI features.** Your API key for the Google Gemini API. This is necessary for features like AI-powered post generation and the interactive Tea House. You can obtain a key from [Google AI Studio](https://aistudio.google.com/app/apikey).
-
-
-### 2. Install Dependencies
-
-```bash
-npm install
-# or
-yarn install
-# or
-pnpm install
-```
-
-### 3. Run the Development Server
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. The middleware will automatically redirect you to the default locale (e.g., `/ar`).
+3.  **Commit the new lock file**: This is the most important step. Your deployment will fail without it.
+    ```bash
+    git add package-lock.json
+    git commit -m "fix: Synchronize package-lock.json"
+    git push
+    ```
+After pushing the updated `package-lock.json`, you can proceed with the Cloudflare deployment steps below.
 
 ---
 
-## Deployment
+## Getting Started
 
-This application is built with Next.js and is ready for production deployment. The recommended platform for deploying Next.js applications is **Vercel**, the creators of Next.js.
+### 1. Install Dependencies
 
-### Deploying with Vercel (Recommended)
+If you are setting up for the first time, run:
 
-1.  **Push to Git**: Make sure your project code is pushed to a Git repository (e.g., GitHub, GitLab, Bitbucket).
-2.  **Import Project**: Sign up for a free Vercel account and import your Git repository. Vercel will automatically detect that it is a Next.js project.
-3.  **Configure Environment Variables**: In the Vercel project settings, navigate to "Environment Variables" and add the following:
-    -   **Key**: `NEXT_PUBLIC_API_BASE_URL`
-    -   **Value**: `https://hamlet-unified-complete-2027-production.up.railway.app`
-    -   **Key**: `NEXT_PUBLIC_BACKUP_API`
-    -   **Value**: `https://winter-leaf-f532.safaribosafar.workers.dev`
-    -   **Key**: `NEXT_PUBLIC_API_KEY`
-    -   **Value**: Add your Google Gemini API key here.
-4.  **Deploy**: Click the "Deploy" button. Vercel will build and deploy your application, providing you with a live URL.
+```bash
+npm install
+```
 
-The application is now live! Vercel will automatically redeploy the application every time you push new changes to your connected Git branch.
+### 2. Run the Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+---
+
+## 🚀 Final Deployment Checklist (Cloudflare Pages)
+
+You're ready to deploy! Follow these steps carefully.
+
+### Pre-Flight Check
+1.  **Sync Your Lockfile**: Complete the "CRITICAL: Before You Deploy" steps above. This is not optional.
+2.  **Get Your API Keys Ready**: You will need two critical pieces of information. Have them ready in a notepad:
+    *   `NEXT_PUBLIC_API_BASE_URL`: This is the full URL to your deployed backend API (e.g., `https://your-backend-api.up.railway.app`).
+    *   `API_KEY`: This is your Google Gemini API Key for generating AI posts.
+
+### Deployment Steps on Cloudflare
+
+1.  **Connect to GitHub**:
+    *   Log in to your Cloudflare dashboard.
+    *   Go to **Workers & Pages** and click **Create application**.
+    *   Select the **Pages** tab and click **Connect to Git**.
+    *   Choose your project's GitHub repository and click **Begin setup**.
+
+2.  **Configure Build & Deploy Settings**:
+    *   **Project name**: Give your project a name (e.g., `digital-diwan`).
+    *   **Production branch**: Select your main branch (`main` or `master`).
+    *   **Framework preset**: Select **Next.js** from the dropdown. Cloudflare will automatically set the build command and output directory for you. It should look like this:
+        *   **Build command**: `npm run build`
+        *   **Build output directory**: `.next`
+    
+3.  **Add Environment Variables (Most Important Step!)**:
+    *   Scroll down to **Environment variables (advanced)**.
+    *   Click **Add variable** for each of the following. Be very careful with the names and values.
+
+    | Variable Name              | Value                                         | Type   |
+    | -------------------------- | --------------------------------------------- | ------ |
+    | `NEXT_PUBLIC_API_BASE_URL` | *Paste your backend API URL here*             | Plain  |
+    | `API_KEY`                  | *Paste your Google Gemini API Key here*       | Secret |
+    | `NODE_VERSION`             | `20`                                          | Plain  |
+
+    *   **Note**: Mark `API_KEY` as `Secret` by clicking the "Encrypt" button. This keeps it secure.
+
+4.  **Deploy!**
+    *   Click the **Save and Deploy** button.
+    *   Cloudflare will now pull your code from GitHub, build the project, and deploy it. You can watch the progress in the deployment logs.
+
+5.  **Celebrate!**
+    *   Once the deployment is finished, Cloudflare will give you a unique URL (e.g., `digital-diwan.pages.dev`). Your application is now live!
+
+Cloudflare will automatically redeploy your site every time you push new changes to your connected branch. You've got this!

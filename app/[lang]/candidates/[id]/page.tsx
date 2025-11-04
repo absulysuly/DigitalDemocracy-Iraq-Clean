@@ -1,41 +1,136 @@
-
-
 import { notFound } from 'next/navigation';
 import Feed from '@/components/social/Feed';
 import { fetchCandidateById } from '@/lib/api';
 import Image from 'next/image';
 import { Post } from '@/lib/types';
+import { Locale } from '@/lib/i18n-config';
+import { GoogleGenAI, Type } from '@google/genai';
+
+/**
+ * Generates dynamic, AI-powered social media posts for a candidate profile.
+ * @param candidate - The candidate object.
+ * @param lang - The current locale.
+ * @returns A promise that resolves to an array of Post objects.
+ */
+async function generateCandidatePosts(
+  candidate: Awaited<ReturnType<typeof fetchCandidateById>>, 
+  lang: Locale
+): Promise<Post[]> {
+  if (!process.env.API_KEY) {
+    console.error("API key is not configured for post generation.");
+    return fallbackPosts(candidate, lang);
+  }
+  
+  if (!candidate) {
+    return [];
+  }
+
+  try {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
+    const prompt = `Generate 2 realistic social media posts for an Iraqi political candidate named ${candidate.name} from the ${candidate.party} party, running in ${candidate.governorate}.
+The posts should be optimistic and engaging for a young Iraqi audience. The tone should be professional yet approachable. One post can be about a local issue or recent event in their governorate, and another can be a general message of unity or progress.
+Do not use hashtags. The language of the posts should be ${lang === 'ar' ? 'Arabic' : (lang === 'ku' ? 'Kurdish' : 'English')}.
+Return the response as a JSON array of objects, where each object has a 'content' (string) and an optional 'image_prompt' (string) key. The image_prompt should be a simple phrase in English for generating a background image, like 'A bustling market in Baghdad' or 'Children playing football in a field'.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              content: {
+                type: Type.STRING,
+                description: "The text content of the social media post."
+              },
+              image_prompt: {
+                type: Type.STRING,
+                description: "A brief, descriptive English prompt to generate a relevant image for the post."
+              }
+            },
+            required: ['content']
+          }
+        }
+      }
+    });
+
+    const responseText = response.text || '[]';
+    const generatedData = JSON.parse(responseText) as { content: string, image_prompt?: string }[];
+    
+    return generatedData.map((postData, index) => ({
+      id: `gen-post-${candidate.id}-${index}`,
+      author: { 
+        name: candidate.name, 
+        avatar: candidate.photo || `https://avatar.iran.liara.run/public/${candidate.gender === 'female' ? 'girl' : 'boy'}?username=${candidate.id}`, 
+        verified: true 
+      },
+      content: postData.content,
+      likes: Math.floor(Math.random() * 3000) + 500,
+      comments: Math.floor(Math.random() * 500) + 50,
+      shares: Math.floor(Math.random() * 200) + 20,
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * (index + 1) * 24),
+      image: postData.image_prompt ? `https://picsum.photos/seed/${encodeURIComponent(postData.image_prompt)}/800/400` : undefined,
+    }));
+  } catch (error) {
+    console.error("Error generating candidate posts:", error);
+    return fallbackPosts(candidate, lang);
+  }
+}
+
+/**
+ * Fallback posts if AI generation fails
+ */
+function fallbackPosts(
+  candidate: Awaited<ReturnType<typeof fetchCandidateById>>,
+  lang: Locale
+): Post[] {
+  if (!candidate) return [];
+  
+  return [
+    {
+      id: 'post-c1',
+      author: { 
+        name: candidate.name, 
+        avatar: candidate.photo || `https://avatar.iran.liara.run/public/${candidate.gender === 'female' ? 'girl' : 'boy'}?username=${candidate.id}`, 
+        verified: true 
+      },
+      content: 'Thank you for your support! Together we can build a better future for our governorate.',
+      likes: 2500,
+      comments: 312,
+      shares: 102,
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
+      image: 'https://picsum.photos/seed/campaign-rally/800/400'
+    },
+    {
+      id: 'post-c2',
+      author: { 
+        name: candidate.name, 
+        avatar: candidate.photo || `https://avatar.iran.liara.run/public/${candidate.gender === 'female' ? 'girl' : 'boy'}?username=${candidate.id}`, 
+        verified: true 
+      },
+      content: 'Today I visited the local market to speak with vendors and hear their concerns. It is vital that we support our small businesses.',
+      likes: 1800,
+      comments: 240,
+      shares: 88,
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
+    }
+  ];
+}
 
 export default async function CandidatePage({ 
   params 
 }: { 
-  params: { id: string; lang: string } 
+  params: { id: string; lang: Locale } 
 }) {
   const candidate = await fetchCandidateById(params.id);
   if (!candidate) notFound();
 
-  // FIX: Add mock posts for the candidate to pass to the Feed component.
-  const candidatePosts: Post[] = [
-    {
-        id: 'post-c1',
-        author: { name: candidate.name, avatar: candidate.photo || `https://avatar.iran.liara.run/public/${candidate.gender === 'female' ? 'girl' : 'boy'}?username=${candidate.id}`, verified: true },
-        content: 'Thank you for your support! Together we can build a better future for our governorate.',
-        likes: 2500,
-        comments: 312,
-        shares: 102,
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2),
-        image: 'https://picsum.photos/seed/campaign-rally/800/400'
-    },
-    {
-        id: 'post-c2',
-        author: { name: candidate.name, avatar: candidate.photo || `https://avatar.iran.liara.run/public/${candidate.gender === 'female' ? 'girl' : 'boy'}?username=${candidate.id}`, verified: true },
-        content: 'Today I visited the local market to speak with vendors and hear their concerns. It is vital that we support our small businesses.',
-        likes: 1800,
-        comments: 240,
-        shares: 88,
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    }
-  ];
+  // Generate posts for the candidate using AI
+  const candidatePosts = await generateCandidatePosts(candidate, params.lang);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

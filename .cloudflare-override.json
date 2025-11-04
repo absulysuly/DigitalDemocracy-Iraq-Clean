@@ -1,8 +1,8 @@
 {
   "build": {
-    "command": "npm run build",
+    "command": "npm run build:cloudflare",
     "environment": {
-      "NODE_VERSION": "20.11.0"
+      "NODE_VERSION": "20.19.2"
     }
   }
 }
