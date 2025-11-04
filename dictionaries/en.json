@@ -1,3 +1,4 @@
+
 {
   "metadata": {
     "title": "Digital Diwan",
@@ -56,13 +57,9 @@
     "teahouse": {
       "title": "The Digital Tea House",
       "description": "Engage in live voice conversations with Naseem, your friendly host.",
-      "disconnected": "Disconnected",
-      "connecting": "Connecting...",
-      "connected": "Connected",
-      "error": "Connection Error",
-      "speakNow": "Speak now...",
       "join": "Join Tea House",
-      "leave": "Leave Tea House"
+      "featureUnderReviewTitle": "Feature Under Review",
+      "featureUnderReviewText": "The live voice chat feature is currently being updated to ensure a secure and reliable connection. This requires a new server-side setup to protect API keys and manage real-time audio. Thank you for your patience!"
     }
   },
   "filters": {
@@ -96,5 +93,8 @@
     "title": "Page Not Found",
     "description": "Sorry, we couldn't find the page you're looking for.",
     "returnHome": "Return to Home"
+  },
+  "homeFeed": {
+    "loading": "Brewing the latest posts from the Diwan..."
   }
 }
