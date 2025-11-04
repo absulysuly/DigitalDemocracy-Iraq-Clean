@@ -6,10 +6,10 @@ compatibility_date = "2024-01-01"
 pages_build_output_dir = ".next"
 
 [build]
-command = "npm run build"
+command = "npx @cloudflare/next-on-pages@1"
 
 [build.environment]
-NODE_VERSION = "20"
+NODE_VERSION = "20.11.0"
 
 # Environment variables (set these in Cloudflare dashboard)
 [env.production]
