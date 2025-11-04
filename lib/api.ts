@@ -1,143 +1,152 @@
-import axios from 'axios';
+'use client';
+import React, { useState, useEffect } from 'react';
+import { useSwipeable } from 'react-swipeable';
+import { useRouter } from 'next/navigation';
+import Feed from "@/components/social/Feed";
+import { Locale } from '@/lib/i18n-config';
+import { Post, User } from '@/lib/types';
+import { motion } from 'framer-motion';
+import { Send, Sparkles } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { generateSocialPost } from '@/services/geminiService';
+import { fetchPosts } from '@/lib/api';
+import LoadingPalm from '@/components/ui/LoadingPalm';
 
-// Railway Backend URL - 7,769 Iraqi Candidates
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://digitaldemocracy-iraq-production.up.railway.app';
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Candidate Interface
-export interface Candidate {
-  id: number;
-  name: string;
-  nameArabic?: string;
-  nameKurdish?: string;
-  age: number;
-  gender: string;
-  education: string;
-  occupation: string;
-  party: string;
-  partyArabic?: string;
-  partyKurdish?: string;
-  constituency: string;
-  constituencyArabic?: string;
-  constituencyKurdish?: string;
-  province: string;
-  provinceArabic?: string;
-  provinceKurdish?: string;
-  biography?: string;
-  biographyArabic?: string;
-  biographyKurdish?: string;
-  photo?: string;
-  manifestoUrl?: string;
-  socialMedia?: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-  };
-}
-
-// Stats Interface
-export interface Stats {
-  totalCandidates: number;
-  byProvince: Record<string, number>;
-  byParty: Record<string, number>;
-  byGender: Record<string, number>;
-  byEducation: Record<string, number>;
-}
-
-// Filter Parameters
-export interface CandidateFilters {
-  search?: string;
-  province?: string;
-  party?: string;
-  gender?: string;
-  constituency?: string;
-  page?: number;
-  limit?: number;
-}
-
-// API Functions
-export const candidatesAPI = {
-  // Get all candidates with filters
-  getCandidates: async (filters: CandidateFilters = {}) => {
-    try {
-      const response = await api.get('/api/candidates', { params: filters });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching candidates:', error);
-      throw error;
-    }
-  },
-
-  // Get single candidate by ID
-  getCandidateById: async (id: number | string) => {
-    try {
-      const response = await api.get(`/api/candidates/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching candidate ${id}:`, error);
-      throw error;
-    }
-  },
-
-  // Get statistics
-  getStats: async (): Promise<Stats> => {
-    try {
-      const response = await api.get('/api/stats');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-      throw error;
-    }
-  },
-
-  // Get provinces list
-  getProvinces: async () => {
-    try {
-      const response = await api.get('/api/provinces');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching provinces:', error);
-      throw error;
-    }
-  },
-
-  // Get parties list
-  getParties: async () => {
-    try {
-      const response = await api.get('/api/parties');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching parties:', error);
-      throw error;
-    }
-  },
-
-  // Search candidates
-  searchCandidates: async (query: string) => {
-    try {
-      const response = await api.get('/api/candidates/search', {
-        params: { q: query },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error searching candidates:', error);
-      throw error;
-    }
-  },
+// Mock current user
+const currentUser: User = {
+    name: 'You',
+    avatar: 'https://i.pravatar.cc/48?u=current_user',
+    verified: false,
 };
 
-// Export convenience functions for direct imports
-export const fetchCandidates = candidatesAPI.getCandidates;
-export const fetchCandidateById = candidatesAPI.getCandidateById;
-export const fetchStats = candidatesAPI.getStats;
-export const fetchGovernorates = candidatesAPI.getProvinces;
-export const fetchParties = candidatesAPI.getParties;
+// Sub-component for creating new posts
+function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: string) => void, dictionary: any }) {
+    const [content, setContent] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
 
-export default api;
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (content.trim()) {
+            onCreatePost(content);
+            setContent('');
+            toast.success('Your post has been published!');
+        }
+    };
+
+    const handleGenerate = async () => {
+        setIsGenerating(true);
+        try {
+            const generatedContent = await generateSocialPost();
+            setContent(generatedContent);
+        } catch (error) {
+            toast.error("Failed to generate post.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+    
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md mb-6"
+        >
+            <form onSubmit={handleSubmit}>
+                <div className="flex items-start gap-4">
+                    <img src={currentUser.avatar} alt="Your avatar" className="w-12 h-12 rounded-full" />
+                    <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder={dictionary.placeholder}
+                        className="w-full h-24 p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                        aria-label="Create a new post"
+                    />
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                    <button
+                        type="button"
+                        onClick={handleGenerate}
+                        disabled={isGenerating}
+                        className="flex items-center gap-2 px-4 py-2 text-green-700 font-semibold rounded-lg disabled:opacity-50 hover:bg-green-50 dark:text-green-400 dark:hover:bg-gray-700 transition"
+                    >
+                        {isGenerating ? (
+                            <div className="w-4 h-4 border-2 border-dashed rounded-full animate-spin border-green-500"></div>
+                        ) : (
+                            <Sparkles size={16} />
+                        )}
+                        <span>{isGenerating ? dictionary.generating : dictionary.generateWithAI}</span>
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={!content.trim()}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700 transition"
+                    >
+                        <Send size={16} />
+                        <span>{dictionary.post}</span>
+                    </button>
+                </div>
+            </form>
+        </motion.div>
+    );
+}
+
+
+export default function HomeView({ lang, dictionary }: { lang: Locale; dictionary: any }) {
+  const router = useRouter();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadPosts = async () => {
+        setIsLoading(true);
+        try {
+            const fetchedPosts = await fetchPosts();
+            setPosts(fetchedPosts);
+        } catch (error) {
+            console.error("Failed to fetch posts:", error);
+            toast.error("Could not load the feed. Please try again later.");
+            setPosts([]); // Set to empty array on error
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    loadPosts();
+  }, []);
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => router.push(`/${lang}/discover`),
+    onSwipedRight: () => router.push(`/${lang}/profile`),
+    preventScrollOnSwipe: true,
+    trackMouse: true
+  });
+
+  const handleCreatePost = (content: string) => {
+      const newPost: Post = {
+          id: `post-${Date.now()}`,
+          author: currentUser,
+          content,
+          likes: 0,
+          comments: 0,
+          shares: 0,
+          timestamp: new Date(),
+      };
+      setPosts(prevPosts => [newPost, ...prevPosts]);
+  };
+
+  return (
+    <div {...handlers} className="min-h-screen">
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        <ComposeCard onCreatePost={handleCreatePost} dictionary={dictionary.compose} />
+        {isLoading ? (
+            <div className="flex flex-col items-center justify-center pt-16">
+                <LoadingPalm />
+                <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">{dictionary.homeFeed.loading}</p>
+            </div>
+        ) : (
+            <Feed lang={lang} posts={posts} />
+        )}
+      </div>
+    </div>
+  );
+}
