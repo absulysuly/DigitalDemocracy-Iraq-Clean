@@ -12,7 +12,7 @@
       "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
       "static/chunks/117-745b7a92fef200e9.js",
       "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/app/layout-7cc64c53113837a1.js"
+      "static/chunks/app/layout-10531b8867ed15f2.js"
     ],
     "/error": [
       "static/chunks/webpack-978a9e73aad582c2.js",
@@ -21,12 +21,27 @@
       "static/chunks/main-app-f1ecbd39f00098ba.js",
       "static/chunks/app/error-3ac8aa04e9a95e61.js"
     ],
-    "/[lang]/about/page": [
+    "/[lang]/candidates/[id]/page": [
       "static/chunks/webpack-978a9e73aad582c2.js",
       "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
       "static/chunks/117-745b7a92fef200e9.js",
       "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/app/[lang]/about/page-331ff375571d86f9.js"
+      "static/chunks/878-d47ae52bdc1c58e0.js",
+      "static/chunks/app/[lang]/candidates/[id]/page-d2a29e59de83c42e.js"
+    ],
+    "/[lang]/candidates/[id]/loading": [
+      "static/chunks/webpack-978a9e73aad582c2.js",
+      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
+      "static/chunks/117-745b7a92fef200e9.js",
+      "static/chunks/main-app-f1ecbd39f00098ba.js",
+      "static/chunks/app/[lang]/candidates/[id]/loading-d05e2379313c45d0.js"
+    ],
+    "/[lang]/candidates/loading": [
+      "static/chunks/webpack-978a9e73aad582c2.js",
+      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
+      "static/chunks/117-745b7a92fef200e9.js",
+      "static/chunks/main-app-f1ecbd39f00098ba.js",
+      "static/chunks/app/[lang]/candidates/loading-4a45108ed1ed1f67.js"
     ],
     "/[lang]/layout": [
       "static/chunks/webpack-978a9e73aad582c2.js",
@@ -44,7 +59,7 @@
       "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
       "static/chunks/117-745b7a92fef200e9.js",
       "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/app/[lang]/loading-0adac76c8c51ea77.js"
+      "static/chunks/app/[lang]/loading-b278005f8a410f91.js"
     ],
     "/[lang]/not-found": [
       "static/chunks/webpack-978a9e73aad582c2.js",
@@ -53,46 +68,6 @@
       "static/chunks/main-app-f1ecbd39f00098ba.js",
       "static/chunks/972-7be9cbfb46d3a5aa.js",
       "static/chunks/app/[lang]/not-found-77736575581c1328.js"
-    ],
-    "/[lang]/page": [
-      "static/chunks/webpack-978a9e73aad582c2.js",
-      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
-      "static/chunks/117-745b7a92fef200e9.js",
-      "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/521-a4dd3616ae3e3eb6.js",
-      "static/chunks/935-74fe10cf0976f74b.js",
-      "static/chunks/929-9fe79a63862c4d9f.js",
-      "static/chunks/app/[lang]/page-f09c313403a68e92.js"
-    ],
-    "/[lang]/governorates/page": [
-      "static/chunks/webpack-978a9e73aad582c2.js",
-      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
-      "static/chunks/117-745b7a92fef200e9.js",
-      "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/972-7be9cbfb46d3a5aa.js",
-      "static/chunks/app/[lang]/governorates/page-7928ac2b9f596fa1.js"
-    ],
-    "/[lang]/candidates/[id]/page": [
-      "static/chunks/webpack-978a9e73aad582c2.js",
-      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
-      "static/chunks/117-745b7a92fef200e9.js",
-      "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/878-d47ae52bdc1c58e0.js",
-      "static/chunks/app/[lang]/candidates/[id]/page-d2a29e59de83c42e.js"
-    ],
-    "/[lang]/candidates/[id]/loading": [
-      "static/chunks/webpack-978a9e73aad582c2.js",
-      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
-      "static/chunks/117-745b7a92fef200e9.js",
-      "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/app/[lang]/candidates/[id]/loading-e8b9c8c55c22370a.js"
-    ],
-    "/[lang]/candidates/loading": [
-      "static/chunks/webpack-978a9e73aad582c2.js",
-      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
-      "static/chunks/117-745b7a92fef200e9.js",
-      "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/app/[lang]/candidates/loading-bf0c3646ea3edf57.js"
     ],
     "/[lang]/candidates/page": [
       "static/chunks/webpack-978a9e73aad582c2.js",
@@ -109,7 +84,32 @@
       "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
       "static/chunks/117-745b7a92fef200e9.js",
       "static/chunks/main-app-f1ecbd39f00098ba.js",
-      "static/chunks/app/[lang]/discover/page-25c682b71944e0f5.js"
+      "static/chunks/app/[lang]/discover/page-01a728615d66adaf.js"
+    ],
+    "/[lang]/governorates/page": [
+      "static/chunks/webpack-978a9e73aad582c2.js",
+      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
+      "static/chunks/117-745b7a92fef200e9.js",
+      "static/chunks/main-app-f1ecbd39f00098ba.js",
+      "static/chunks/972-7be9cbfb46d3a5aa.js",
+      "static/chunks/app/[lang]/governorates/page-7928ac2b9f596fa1.js"
+    ],
+    "/[lang]/about/page": [
+      "static/chunks/webpack-978a9e73aad582c2.js",
+      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
+      "static/chunks/117-745b7a92fef200e9.js",
+      "static/chunks/main-app-f1ecbd39f00098ba.js",
+      "static/chunks/app/[lang]/about/page-554a81598234f18c.js"
+    ],
+    "/[lang]/page": [
+      "static/chunks/webpack-978a9e73aad582c2.js",
+      "static/chunks/fd9d1056-2ef34eb419e0d7c5.js",
+      "static/chunks/117-745b7a92fef200e9.js",
+      "static/chunks/main-app-f1ecbd39f00098ba.js",
+      "static/chunks/521-a4dd3616ae3e3eb6.js",
+      "static/chunks/935-74fe10cf0976f74b.js",
+      "static/chunks/929-9fe79a63862c4d9f.js",
+      "static/chunks/app/[lang]/page-f09c313403a68e92.js"
     ],
     "/[lang]/stats/page": [
       "static/chunks/webpack-978a9e73aad582c2.js",
