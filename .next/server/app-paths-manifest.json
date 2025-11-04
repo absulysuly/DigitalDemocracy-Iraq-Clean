@@ -1,13 +1,12 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/[lang]/about/page": "app/[lang]/about/page.js",
+  "/[lang]/page": "app/[lang]/page.js",
+  "/[lang]/governorates/page": "app/[lang]/governorates/page.js",
   "/[lang]/candidates/[id]/page": "app/[lang]/candidates/[id]/page.js",
   "/[lang]/candidates/page": "app/[lang]/candidates/page.js",
   "/[lang]/discover/page": "app/[lang]/discover/page.js",
-  "/[lang]/page": "app/[lang]/page.js",
-  "/[lang]/chat/page": "app/[lang]/chat/page.js",
-  "/[lang]/governorates/page": "app/[lang]/governorates/page.js",
-  "/[lang]/profile/page": "app/[lang]/profile/page.js",
   "/[lang]/stats/page": "app/[lang]/stats/page.js",
+  "/[lang]/profile/page": "app/[lang]/profile/page.js",
   "/[lang]/teahouse/page": "app/[lang]/teahouse/page.js"
 }
