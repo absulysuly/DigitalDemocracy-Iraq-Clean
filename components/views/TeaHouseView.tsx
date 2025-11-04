@@ -1,4 +1,3 @@
-
 'use client';
 import IraqiHeader from '../ui/IraqiHeader';
 import { Mic } from 'lucide-react';
@@ -11,11 +10,9 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
                 <div className="absolute inset-0 -z-0 bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900/50 dark:via-gray-800 dark:to-gray-900/30"></div>
                 <div className="relative z-10 flex h-96 flex-col items-center justify-center text-center">
                     <div className="rounded-lg bg-yellow-100 p-4 dark:bg-yellow-900/50">
-                        <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">Feature Under Review</h3>
+                        <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">{dictionary.page.teahouse.featureUnderReviewTitle}</h3>
                         <p className="mt-2 text-gray-700 dark:text-gray-300">
-                            The live voice chat feature is currently being updated to ensure a secure and reliable connection.
-                            This requires a new server-side setup to protect API keys and manage real-time audio.
-                            Thank you for your patience!
+                           {dictionary.page.teahouse.featureUnderReviewText}
                         </p>
                     </div>
                     <div className="mt-8">
