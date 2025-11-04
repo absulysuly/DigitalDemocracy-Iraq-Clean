@@ -1,44 +1,61 @@
+'use client';
 
 import Link from 'next/link';
-import { Locale } from '@/lib/i18n-config';
-import { Home, Search, Users, User, Coffee } from 'lucide-react';
+import type { ReactNode } from 'react';
+import type { Locale } from '@/lib/i18n-config';
+import { Coffee } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
 
-export default function TopNavBar({ lang, dictionary }: { lang: Locale, dictionary: any }) {
-  const nav = dictionary;
+interface NavigationDictionary {
+  home: string;
+  discover: string;
+  candidates: string;
+  teahouse: string;
+  profile: string;
+}
 
-  const navLinks = [
-    { href: '/', label: nav.home },
-    { href: '/discover', label: nav.discover },
-    { href: '/candidates', label: nav.candidates },
-    { href: '/teahouse', label: nav.teahouse },
-    { href: '/profile', label: nav.profile },
-  ];
+interface TopNavBarProps {
+  lang: Locale;
+  dictionary: NavigationDictionary;
+}
 
+const navLinkConfig: Array<{
+  href: string;
+  labelKey: keyof NavigationDictionary;
+  icon?: ReactNode;
+}> = [
+  { href: '/', labelKey: 'home' },
+  { href: '/discover', labelKey: 'discover' },
+  { href: '/candidates', labelKey: 'candidates' },
+  { href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} /> },
+  { href: '/profile', labelKey: 'profile' },
+];
+
+export default function TopNavBar({ lang, dictionary }: TopNavBarProps) {
   return (
     <header className="sticky top-0 z-40 hidden bg-white/80 shadow-sm backdrop-blur-md dark:bg-gray-900/80 md:block">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href={`/${lang}`} className="flex-shrink-0">
-               <span className="text-2xl font-bold font-arabic text-gray-900 dark:text-white">ديوان</span>
+              <span className="font-arabic text-2xl font-bold text-gray-900 dark:text-white">ديوان</span>
             </Link>
-            <div className="flex space-x-4 rtl:space-x-reverse">
-              {navLinks.map((link) => (
+            <div className="flex items-center space-x-4 rtl:space-x-reverse">
+              {navLinkConfig.map(({ href, labelKey, icon }) => (
                 <Link
-                  key={link.label}
-                  href={`/${lang}${link.href}`}
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 flex items-center gap-2"
+                  key={labelKey}
+                  href={`/${lang}${href}`}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
-                  {link.href === '/teahouse' && <Coffee size={16} />}
-                  {link.label}
+                  {icon}
+                  {dictionary[labelKey]}
                 </Link>
               ))}
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <NotificationBell />
-            {/* Search, ThemeToggle, and LanguageSwitcher would go here */}
+            {/* TODO: Add Search, ThemeToggle, and LanguageSwitcher */}
           </div>
         </div>
       </nav>
