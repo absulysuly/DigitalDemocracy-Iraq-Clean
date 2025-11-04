@@ -14,7 +14,6 @@
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "@headlessui/react": "^2.1.2",
-    "@tailwindcss/postcss": "^4.1.16",
     "axios": "^1.6.0",
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
@@ -37,6 +36,7 @@
     "use-debounce": "^10.0.6"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.16",
     "@types/canvas-confetti": "^1.6.4",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20",

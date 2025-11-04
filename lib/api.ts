@@ -133,4 +133,11 @@ export const candidatesAPI = {
   },
 };
 
+// Export convenience functions for direct imports
+export const fetchCandidates = candidatesAPI.getCandidates;
+export const fetchCandidateById = candidatesAPI.getCandidateById;
+export const fetchStats = candidatesAPI.getStats;
+export const fetchGovernorates = candidatesAPI.getProvinces;
+export const fetchParties = candidatesAPI.getParties;
+
 export default api;

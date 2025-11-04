@@ -2,7 +2,7 @@ import { fetchStats } from '@/lib/api';
 import { Locale } from '@/lib/i18n-config';
 import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
-import { Users, UserCheck, MapMarkedAlt } from 'lucide-react';
+import { Users, UserCheck, MapPin } from 'lucide-react';
 import StatsClient from '@/components/stats/StatsClient';
 import React from 'react';
 
@@ -44,7 +44,7 @@ export default async function StatsPage({
     { icon: Users, title: dictionary.page.stats.totalCandidates, value: stats.total_candidates },
     { icon: UserCheck, title: dictionary.page.stats.maleCandidates, value: stats.gender_distribution.Male },
     { icon: UserCheck, title: dictionary.page.stats.femaleCandidates, value: stats.gender_distribution.Female },
-    { icon: MapMarkedAlt, title: dictionary.page.stats.governorates, value: stats.candidates_per_governorate.length },
+    { icon: MapPin, title: dictionary.page.stats.governorates, value: stats.candidates_per_governorate.length },
   ];
 
   return (
