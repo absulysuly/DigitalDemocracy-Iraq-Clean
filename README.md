@@ -2,11 +2,35 @@
 
 This is a modern, multilingual (English, Arabic, Kurdish), and responsive web application for fostering civic engagement around the Iraqi elections, built with Next.js 14 and the App Router.
 
+## 🔴 CRITICAL: Before You Deploy
+
+The most common deployment error is a mismatch between `package.json` and `package-lock.json`. To fix this permanently before every deployment, you **MUST** run the following commands locally:
+
+1.  **Delete old files** to ensure a clean slate:
+    ```bash
+    rm -rf node_modules package-lock.json
+    ```
+
+2.  **Install dependencies and generate a new lock file**: This command reads your `package.json` and creates a perfectly synced `package-lock.json`.
+    ```bash
+    npm install
+    ```
+
+3.  **Commit the new lock file**: This is the most important step. Your deployment will fail without it.
+    ```bash
+    git add package-lock.json
+    git commit -m "fix: Synchronize package-lock.json"
+    git push
+    ```
+After pushing the updated `package-lock.json`, you can proceed with the Cloudflare deployment steps below.
+
+---
+
 ## Getting Started
 
 ### 1. Install Dependencies
 
-If you have made changes to `package.json` or are setting up for the first time, run:
+If you are setting up for the first time, run:
 
 ```bash
 npm install
@@ -24,10 +48,10 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## 🚀 Final Deployment Checklist (Cloudflare Pages)
 
-You're ready to deploy! The project is in great shape. Follow these steps carefully, and your Digital Diwan will be live.
+You're ready to deploy! Follow these steps carefully.
 
 ### Pre-Flight Check
-1.  **Final Code Push**: Make sure all your latest code changes are pushed to your main branch on GitHub.
+1.  **Sync Your Lockfile**: Complete the "CRITICAL: Before You Deploy" steps above. This is not optional.
 2.  **Get Your API Keys Ready**: You will need two critical pieces of information. Have them ready in a notepad:
     *   `NEXT_PUBLIC_API_BASE_URL`: This is the full URL to your deployed backend API (e.g., `https://your-backend-api.up.railway.app`).
     *   `API_KEY`: This is your Google Gemini API Key for generating AI posts.
