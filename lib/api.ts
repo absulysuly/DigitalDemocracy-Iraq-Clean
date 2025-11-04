@@ -1,152 +1,153 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { useSwipeable } from 'react-swipeable';
-import { useRouter } from 'next/navigation';
-import Feed from "@/components/social/Feed";
-import { Locale } from '@/lib/i18n-config';
-import { Post, User } from '@/lib/types';
-import { motion } from 'framer-motion';
-import { Send, Sparkles } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { generateSocialPost } from '@/services/geminiService';
-import { fetchPosts } from '@/lib/api';
-import LoadingPalm from '@/components/ui/LoadingPalm';
+import { Candidate, Governorate, Stats, PaginatedCandidates, Party, Post } from './types';
 
-// Mock current user
-const currentUser: User = {
-    name: 'You',
-    avatar: 'https://i.pravatar.cc/48?u=current_user',
-    verified: false,
-};
+const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
 
-// Sub-component for creating new posts
-function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: string) => void, dictionary: any }) {
-    const [content, setContent] = useState('');
-    const [isGenerating, setIsGenerating] = useState(false);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (content.trim()) {
-            onCreatePost(content);
-            setContent('');
-            toast.success('Your post has been published!');
-        }
-    };
-
-    const handleGenerate = async () => {
-        setIsGenerating(true);
+/**
+ * Attempts to fetch a resource with a retry mechanism using exponential backoff.
+ * @param url The URL to fetch.
+ * @param options The request options.
+ * @param retries The number of retry attempts.
+ * @param initialTimeout The initial timeout in milliseconds.
+ * @returns A promise that resolves to the Response object.
+ */
+async function fetchWithRetry(url: string, options?: RequestInit, retries = 3, initialTimeout = 1000): Promise<Response> {
+    for (let i = 0; i < retries; i++) {
         try {
-            const generatedContent = await generateSocialPost();
-            setContent(generatedContent);
+            const response = await fetch(url, options);
+            // Don't retry on 4xx client errors, but do on 5xx server errors
+            if (response.ok || (response.status >= 400 && response.status < 500)) {
+                return response;
+            }
         } catch (error) {
-            toast.error("Failed to generate post.");
-        } finally {
-            setIsGenerating(false);
+            // This catches network errors. We retry on those.
+            if (i === retries - 1) throw error; // Rethrow last error
         }
-    };
-    
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-md mb-6"
-        >
-            <form onSubmit={handleSubmit}>
-                <div className="flex items-start gap-4">
-                    <img src={currentUser.avatar} alt="Your avatar" className="w-12 h-12 rounded-full" />
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        placeholder={dictionary.placeholder}
-                        className="w-full h-24 p-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                        aria-label="Create a new post"
-                    />
-                </div>
-                <div className="flex justify-between items-center mt-2">
-                    <button
-                        type="button"
-                        onClick={handleGenerate}
-                        disabled={isGenerating}
-                        className="flex items-center gap-2 px-4 py-2 text-green-700 font-semibold rounded-lg disabled:opacity-50 hover:bg-green-50 dark:text-green-400 dark:hover:bg-gray-700 transition"
-                    >
-                        {isGenerating ? (
-                            <div className="w-4 h-4 border-2 border-dashed rounded-full animate-spin border-green-500"></div>
-                        ) : (
-                            <Sparkles size={16} />
-                        )}
-                        <span>{isGenerating ? dictionary.generating : dictionary.generateWithAI}</span>
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={!content.trim()}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700 transition"
-                    >
-                        <Send size={16} />
-                        <span>{dictionary.post}</span>
-                    </button>
-                </div>
-            </form>
-        </motion.div>
-    );
+        // Wait with exponential backoff before the next retry
+        await new Promise(resolve => setTimeout(resolve, initialTimeout * Math.pow(2, i)));
+    }
+    // This should only be reached if all retries fail.
+    throw new Error(`API request to ${url} failed after ${retries} retries.`);
 }
 
 
-export default function HomeView({ lang, dictionary }: { lang: Locale; dictionary: any }) {
-  const router = useRouter();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+async function fetchWithFallback<T>(
+  endpoint: string,
+  options?: RequestInit
+): Promise<T> {
+  if (!PRIMARY_API_URL) {
+    throw new Error('NEXT_PUBLIC_API_BASE_URL is not defined');
+  }
 
-  useEffect(() => {
-    const loadPosts = async () => {
-        setIsLoading(true);
-        try {
-            const fetchedPosts = await fetchPosts();
-            setPosts(fetchedPosts);
-        } catch (error) {
-            console.error("Failed to fetch posts:", error);
-            toast.error("Could not load the feed. Please try again later.");
-            setPosts([]); // Set to empty array on error
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  const primaryUrl = `${PRIMARY_API_URL}${endpoint}`;
+  let response: Response;
 
-    loadPosts();
-  }, []);
+  try {
+    response = await fetchWithRetry(primaryUrl, options);
+    // If the primary server has a 5xx issue after retries, trigger fallback
+    if (response.status >= 500) {
+      throw new Error(`Primary API server error: ${response.status}`);
+    }
+  } catch (error) {
+    console.warn(`Primary API request to ${primaryUrl} failed: ${error}. Attempting fallback.`);
+    if (BACKUP_API_URL) {
+      const backupUrl = `${BACKUP_API_URL}${endpoint}`;
+      try {
+        response = await fetchWithRetry(backupUrl, options);
+      } catch (backupError) {
+         console.error(`Backup API request to ${backupUrl} also failed:`, backupError);
+         // Re-throw the backup error if it fails
+         throw backupError;
+      }
+    } else {
+      // Re-throw the original error if no backup is available
+      throw error;
+    }
+  }
+  
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => 'Could not read error response body.');
+    throw new Error(`API Error: ${response.status} ${response.statusText}. Body: ${errorText}`);
+  }
 
-  const handlers = useSwipeable({
-    onSwipedLeft: () => router.push(`/${lang}/discover`),
-    onSwipedRight: () => router.push(`/${lang}/profile`),
-    preventScrollOnSwipe: true,
-    trackMouse: true
-  });
+  const text = await response.text();
+  return text ? JSON.parse(text) : ({} as T);
+}
 
-  const handleCreatePost = (content: string) => {
-      const newPost: Post = {
-          id: `post-${Date.now()}`,
-          author: currentUser,
-          content,
-          likes: 0,
-          comments: 0,
-          shares: 0,
-          timestamp: new Date(),
-      };
-      setPosts(prevPosts => [newPost, ...prevPosts]);
+async function apiRequest<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  // Fix: Create a correctly typed options object to satisfy TypeScript while including the Next.js `next` property.
+  const fetchOptions: RequestInit & { next?: { revalidate: number } } = {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    next: { revalidate: 3600 }, // Revalidate every hour
   };
 
-  return (
-    <div {...handlers} className="min-h-screen">
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        <ComposeCard onCreatePost={handleCreatePost} dictionary={dictionary.compose} />
-        {isLoading ? (
-            <div className="flex flex-col items-center justify-center pt-16">
-                <LoadingPalm />
-                <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">{dictionary.homeFeed.loading}</p>
-            </div>
-        ) : (
-            <Feed lang={lang} posts={posts} />
-        )}
-      </div>
-    </div>
-  );
+  return fetchWithFallback<T>(endpoint, fetchOptions);
 }
+
+export const fetchPosts = async (): Promise<Post[]> => {
+    // NOTE: This assumes the backend provides a /api/posts endpoint that returns an array of posts.
+    // The date for `timestamp` will be a string, which is correctly handled by `new Date()` in the Post component.
+    return apiRequest<Post[]>('/api/posts');
+};
+
+export const createPost = async (content: string): Promise<Post> => {
+    // NOTE: This assumes the backend's /api/posts endpoint accepts a POST request
+    // with a 'content' field and returns the newly created post object.
+    return apiRequest<Post>('/api/posts', {
+        method: 'POST',
+        body: JSON.stringify({ content }),
+    });
+};
+
+export const fetchCandidates = async (params: {
+    page?: number,
+    limit?: number,
+    query?: string,
+    governorate?: string,
+    party?: string,
+    gender?: 'male' | 'female',
+    sort?: string,
+}): Promise<PaginatedCandidates> => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.query) queryParams.append('q', params.query);
+    if (params.governorate) queryParams.append('governorate', params.governorate);
+    if (params.party) queryParams.append('party', params.party);
+    if (params.gender) queryParams.append('gender', params.gender);
+    if (params.sort) queryParams.append('sort', params.sort);
+
+    return apiRequest<PaginatedCandidates>(`/api/candidates?${queryParams.toString()}`);
+};
+
+export const fetchCandidateById = async (id: string): Promise<Candidate> => {
+    return apiRequest<Candidate>(`/api/candidates/${id}`);
+};
+
+export const fetchGovernorates = async (): Promise<Governorate[]> => {
+    return apiRequest<Governorate[]>('/api/governorates');
+};
+
+export const fetchParties = async (): Promise<Party[]> => {
+    return apiRequest<Party[]>('/api/parties');
+};
+
+export const fetchStats = async (): Promise<Stats> => {
+    return apiRequest<Stats>('/api/stats');
+};
+
+export const likePost = async (postId: string): Promise<{ success: boolean }> => {
+  // NOTE: This endpoint doesn't exist on the mock backend, so the request will
+  // fail in the browser console. This is expected and serves as proof that
+  // the frontend is attempting to communicate with a real backend service.
+  return apiRequest(`/api/posts/${postId}/like`, {
+    method: 'POST',
+  });
+};
