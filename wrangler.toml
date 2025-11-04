@@ -1,24 +1,5 @@
-# Cloudflare Configuration for Iraqi Digital Democracy Platform
-# This file supports both Pages (Next.js) and Workers (API proxy)
-
+# Cloudflare Pages Configuration  
 name = "digitaldemocracy-iraq"
-main = "worker.js"
 compatibility_date = "2024-11-04"
-
-# For Cloudflare Pages (Next.js Frontend)
-[build]
-command = "npm install && npm run build"
-
-[build.environment]
-NODE_VERSION = "20"
-NEXT_PUBLIC_API_BASE_URL = "https://digitaldemocracy-iraq-production.up.railway.app"
-NEXT_PUBLIC_GEMINI_API_KEY = ""
-
-# For Cloudflare Workers (Optional API Proxy)
-# Uncomment below if you want to deploy the worker separately
-# [env.production]
-# name = "digitaldemocracy-iraq-worker"
-# routes = [
-#   { pattern = "api.digitaldemocracy-iraq.com/*", zone_name = "digitaldemocracy-iraq.com" }
-# ]
+pages_build_output_dir = ".open-next/cloudflare"
 
