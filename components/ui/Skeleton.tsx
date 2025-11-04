@@ -1,10 +1,8 @@
-export function Skeleton({ className = "" }: { className?: string }) {
+export default function Skeleton({ className = "" }: { className?: string }) {
   return (
-    <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`}></div>
-  )
+    <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`} />
+  );
 }
-
-export default Skeleton;
 
 export function SkeletonCard() {
   return (
