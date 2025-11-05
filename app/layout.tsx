@@ -25,12 +25,11 @@ export default function RootLayout({
           enableSystem
           themes={['light', 'dark', 'ramadan']}
         >
-          {/* FIX: The Toaster component was moved outside the provider tree to resolve a type error. */}
           <AuthProvider>
             {children}
           </AuthProvider>
+          <Toaster position="bottom-center" />
         </ThemeProvider>
-        <Toaster position="bottom-center" />
       </body>
     </html>
   );
