@@ -1,3 +1,4 @@
+
 import { Candidate, Governorate, Stats, PaginatedCandidates, Party, Post } from './types';
 
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -97,12 +98,12 @@ export const fetchPosts = async (): Promise<Post[]> => {
     return apiRequest<Post[]>('/api/posts');
 };
 
-export const createPost = async (content: string): Promise<Post> => {
+export const createPost = async (content: string, image?: string): Promise<Post> => {
     // NOTE: This assumes the backend's /api/posts endpoint accepts a POST request
-    // with a 'content' field and returns the newly created post object.
+    // with 'content' and an optional 'image' field, and returns the newly created post object.
     return apiRequest<Post>('/api/posts', {
         method: 'POST',
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, image }),
     });
 };
 
