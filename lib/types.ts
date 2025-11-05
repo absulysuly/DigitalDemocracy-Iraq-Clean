@@ -15,6 +15,25 @@ export interface Post {
   timestamp: Date;
 }
 
+export interface PollOption {
+  id: string;
+  text: string;
+  votes: number;
+}
+
+export interface Poll {
+  id: string;
+  question: string;
+  options: PollOption[];
+  totalVotes: number;
+}
+
+export interface FactCheckResult {
+  verdict: string;
+  reasoning: string;
+  disclaimer: string;
+}
+
 
 export interface Candidate {
   id: string;                    // UUID
@@ -76,4 +95,9 @@ export interface Stats {
       governorate_name: string;
       candidate_count: number;
   }[];
+}
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  content: string;
 }
