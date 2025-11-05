@@ -5,7 +5,7 @@ import { useSwipeable } from 'react-swipeable';
 import { useRouter } from 'next/navigation';
 import Feed from "@/components/social/Feed";
 import { Locale } from '@/lib/i18n-config';
-import { Post, User } from '@/lib/types';
+import { Post } from '@/lib/types';
 import { motion } from 'framer-motion';
 import { Send, Sparkles, ImagePlus, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -13,19 +13,12 @@ import { generateSocialPost } from '@/services/geminiService';
 import { fetchPosts, createPost } from '@/lib/api';
 import SkeletonPostCard from '@/components/SkeletonPostCard';
 import DailyPoll from '../social/DailyPoll';
-
-// Mock current user
-const currentUser: User = {
-    // FIX: Added missing 'id' and 'email' properties to satisfy the User type.
-    id: 'current_user',
-    email: 'you@example.com',
-    name: 'You',
-    avatar: 'https://i.pravatar.cc/48?u=current_user',
-    verified: false,
-};
+import { useAuth } from '@/context/AuthContext';
+import Button from '@/components/ui/Button';
+import Avatar from '@/components/ui/Avatar';
 
 // Sub-component for creating new posts
-function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: string, image?: File | null) => Promise<void>, dictionary: any }) {
+function ComposeCard({ onCreatePost, dictionary, userAvatar }: { onCreatePost: (content: string, image?: File | null) => Promise<void>, dictionary: any, userAvatar: string }) {
     const [content, setContent] = useState('');
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -93,7 +86,7 @@ function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: str
         >
             <form onSubmit={handleSubmit}>
                 <div className="flex items-start gap-4">
-                    <img src={currentUser.avatar} alt="Your avatar" className="w-12 h-12 rounded-full" />
+                    <Avatar src={userAvatar} alt="Your avatar" size={48} />
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
@@ -134,20 +127,18 @@ function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: str
                         >
                             <ImagePlus size={16} />
                         </button>
-                        <button
+                        <Button
                             type="button"
                             onClick={() => handleGenerate()}
                             disabled={isGenerating || isPosting}
-                            className="flex items-center gap-2 px-4 py-2 text-green-700 font-semibold rounded-lg disabled:opacity-50 hover:bg-green-50 dark:text-green-400 dark:hover:bg-gray-700 transition"
-                            aria-label="Generate a post with AI"
+                            variant="ghost"
+                            size="md"
+                            loading={isGenerating && generatingTopic === 'general'}
+                            iconBefore={!isGenerating ? <Sparkles size={16} /> : undefined}
+                            className="text-green-700 dark:text-green-400"
                         >
-                            {isGenerating && generatingTopic === 'general' ? (
-                                <div className="w-4 h-4 border-2 border-dashed rounded-full animate-spin border-green-500"></div>
-                            ) : (
-                                <Sparkles size={16} />
-                            )}
-                            <span>{isGenerating && generatingTopic === 'general' ? (dictionary.generating || 'Generating...') : (dictionary.generateWithAI || 'Generate with AI')}</span>
-                        </button>
+                            {isGenerating && generatingTopic === 'general' ? (dictionary.generating || 'Generating...') : (dictionary.generateWithAI || 'Generate with AI')}
+                        </Button>
                         <div className="h-6 w-px bg-gray-200 dark:bg-gray-600 hidden sm:block"></div>
                         {topics.map(topic => (
                             <button
@@ -166,18 +157,16 @@ function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: str
                             </button>
                         ))}
                     </div>
-                    <button
+                    <Button
                         type="submit"
                         disabled={!content.trim() || isPosting}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-green-700 transition"
+                        variant="primary"
+                        size="md"
+                        loading={isPosting}
+                        iconBefore={!isPosting ? <Send size={16} /> : undefined}
                     >
-                        {isPosting ? (
-                            <div className="w-4 h-4 border-2 border-dashed rounded-full animate-spin border-white"></div>
-                        ) : (
-                            <Send size={16} />
-                        )}
-                        <span>{isPosting ? 'Posting...' : (dictionary.post || 'Post')}</span>
-                    </button>
+                        {isPosting ? 'Posting...' : (dictionary.post || 'Post')}
+                    </Button>
                 </div>
             </form>
         </motion.div>
@@ -187,12 +176,16 @@ function ComposeCard({ onCreatePost, dictionary }: { onCreatePost: (content: str
 
 export default function HomeView({ lang, dictionary }: { lang: Locale; dictionary: any }) {
   const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Defensive check for dictionary prop to avoid crashes on hydration errors.
   const composeDictionary = dictionary?.compose || {};
   const pollDictionary = dictionary?.dailyPoll || {};
+  
+  // Default avatar if user is not authenticated
+  const userAvatar = user?.avatar || 'https://avatar.iran.liara.run/public?username=guest';
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -226,10 +219,19 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
       imageUrl = URL.createObjectURL(imageFile);
     }
     
+    // Create author object from current user or use guest
+    const author = user || {
+        id: 'guest',
+        name: 'Guest User',
+        email: 'guest@example.com',
+        avatar: 'https://avatar.iran.liara.run/public?username=guest',
+        verified: false,
+    };
+    
     // Optimistic UI update
     const optimisticPost: Post = {
         id: `temp-${Date.now()}`, // Temporary ID
-        author: currentUser,
+        author,
         content,
         image: imageUrl,
         likes: 0,
@@ -276,7 +278,21 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
     <div {...handlers} className="min-h-screen">
       <div className="max-w-2xl mx-auto px-4 py-6">
         <DailyPoll dictionary={pollDictionary} />
-        <ComposeCard onCreatePost={handleCreatePost} dictionary={composeDictionary} />
+        {isAuthenticated ? (
+          <ComposeCard onCreatePost={handleCreatePost} dictionary={composeDictionary} userAvatar={userAvatar} />
+        ) : (
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md mb-6 text-center">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              {dictionary?.loginPrompt || 'Please log in to create posts and interact with the community'}
+            </p>
+            <Button 
+              variant="primary" 
+              onClick={() => router.push(`/${lang}/profile`)}
+            >
+              {dictionary?.login || 'Log In'}
+            </Button>
+          </div>
+        )}
         {isLoading ? (
             <div className="space-y-4">
                 {[...Array(5)].map((_, i) => <SkeletonPostCard key={i} />)}

@@ -1,0 +1,16 @@
+
+> digital-diwan@1.0.0 test
+> jest
+
+PASS components/candidates/__tests__/FilterPanel.test.tsx
+PASS components/candidates/__tests__/CandidateCard.test.tsx
+PASS components/ui/__tests__/Button.test.tsx
+PASS components/ui/__tests__/LoadingSpinner.test.tsx
+PASS components/ui/__tests__/VerifiedBadge.test.tsx
+PASS __tests__/lib/utils.test.ts
+
+Test Suites: 6 passed, 6 total
+Tests:       54 passed, 54 total
+Snapshots:   0 total
+Time:        1.221 s
+Ran all test suites.
