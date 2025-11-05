@@ -1,5 +1,5 @@
 
-import { Candidate, Governorate, Stats, PaginatedCandidates, Party, Post } from './types';
+import { Candidate, Governorate, Stats, PaginatedCandidates, Party, Post, Poll, User } from './types';
 
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
@@ -79,18 +79,66 @@ async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  // Fix: Create a correctly typed options object to satisfy TypeScript while including the Next.js `next` property.
+  // This function is updated to allow options (like `cache: 'no-store'`) to override defaults.
+  // FIX: Refactored fetchOptions creation to avoid duplicate 'headers' property key.
+  const { headers, ...otherOptions } = options;
   const fetchOptions: RequestInit & { next?: { revalidate: number } } = {
-    ...options,
+    // Default: Revalidate every hour
+    next: { revalidate: 3600 },
+    // Apply other options from the caller, which may override defaults.
+    ...otherOptions,
+    // Merge headers, ensuring 'Content-Type' is present.
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...headers,
     },
-    next: { revalidate: 3600 }, // Revalidate every hour
   };
 
   return fetchWithFallback<T>(endpoint, fetchOptions);
 }
+
+export const loginUser = async (credentials: {email: string, password: string}): Promise<User> => {
+    // NOTE: This assumes the backend has a /api/auth/login endpoint
+    // that accepts email and password and returns a user object with a token.
+    return apiRequest<User>('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(credentials),
+        cache: 'no-store' // Do not cache auth requests
+    });
+};
+
+export const fetchCurrentUser = async (token: string): Promise<User> => {
+    // NOTE: This assumes the backend has a /api/auth/me endpoint
+    // that validates a token and returns the corresponding user.
+    return apiRequest<User>('/api/auth/me', {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        cache: 'no-store', // Do not cache auth requests
+    });
+};
+
+export const fetchDailyPoll = async (): Promise<Poll> => {
+  // MOCK IMPLEMENTATION
+  // In a real app, this would fetch from an endpoint like /api/polls/daily
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const totalVotes = 1250 + 980 + 1520 + 2100;
+      const pollData: Poll = {
+        id: 'daily-poll-2024-07-28',
+        question: "What is the most important issue for you in the upcoming election?",
+        options: [
+          { id: 'opt1', text: 'Economy & Jobs', votes: 1250 },
+          { id: 'opt2', text: 'Security', votes: 980 },
+          { id: 'opt3', text: 'Public Services', votes: 1520 },
+          { id: 'opt4', text: 'Anti-corruption', votes: 2100 },
+        ],
+        totalVotes: totalVotes,
+      };
+      resolve(pollData);
+    }, 500); // Simulate network delay
+  });
+};
 
 export const fetchPosts = async (): Promise<Post[]> => {
     // NOTE: This assumes the backend provides a /api/posts endpoint that returns an array of posts.
