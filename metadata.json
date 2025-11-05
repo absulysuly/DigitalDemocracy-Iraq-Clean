@@ -1,7 +1,5 @@
+
 {
   "name": "digital-diwan",
-  "description": "The Digital Diwan: Iraq's social platform for civic engagement. Discuss, connect, and hold leaders accountable.",
-  "requestFramePermissions": [
-    "microphone"
-  ]
+  "description": "The Digital Diwan: Iraq's social platform for civic engagement. Discuss, connect, and hold leaders accountable."
 }
