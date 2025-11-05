@@ -2,8 +2,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Candidate } from '@/lib/types';
 import { Locale } from '@/lib/i18n-config';
-import { Landmark, User, CheckCircle } from 'lucide-react';
+import { Landmark, User } from 'lucide-react';
 import React from 'react';
+import VerifiedBadge from '@/components/ui/VerifiedBadge';
 
 type CandidateCardProps = {
   candidate: Candidate;
@@ -25,7 +26,7 @@ const CandidateCard: React.FC<CandidateCardProps> = ({ candidate, dictionary, la
         <div className="flex-1">
           <h3 className="flex items-center gap-2 font-bold text-gray-900 dark:text-white">
             <span>{lang === 'ar' && candidate.name_ar ? candidate.name_ar : candidate.name}</span>
-            {candidate.verified && <CheckCircle className="h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400" />}
+            {candidate.verified && <VerifiedBadge size={20} />}
           </h3>
           <div className="mt-2 space-y-1 text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-2">
