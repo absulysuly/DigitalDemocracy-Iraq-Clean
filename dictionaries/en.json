@@ -8,8 +8,7 @@
     "home": "Home",
     "discover": "Discover",
     "candidates": "Candidates",
-    "profile": "Profile",
-    "teahouse": "Tea House"
+    "profile": "Profile"
   },
   "page": {
     "candidates": {
@@ -53,13 +52,6 @@
       "shareError": "Could not share the profile.",
       "share": "Share",
       "print": "Print"
-    },
-    "teahouse": {
-      "title": "The Digital Tea House",
-      "description": "Engage in live voice conversations with Naseem, your friendly host.",
-      "join": "Join Tea House",
-      "featureUnderReviewTitle": "Feature Under Review",
-      "featureUnderReviewText": "The live voice chat feature is currently being updated to ensure a secure and reliable connection. This requires a new server-side setup to protect API keys and manage real-time audio. Thank you for your patience!"
     }
   },
   "filters": {
