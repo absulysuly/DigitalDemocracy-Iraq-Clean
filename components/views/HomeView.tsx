@@ -256,7 +256,7 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
         toast.success('Your post has been published!');
     } catch (error) {
         console.error("Failed to create post:", error);
-        toast.error("Could not publish your post. Please try again.");
+        toast.error("Could not publish your post. Please try againA
         // Revert the optimistic update on failure
         setPosts(prevPosts => prevPosts.filter(p => p.id !== optimisticPost.id));
     } finally {
@@ -270,11 +270,7 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
   return (
     <div {...handlers} className="min-h-screen">
       <div className="max-w-2xl mx-auto px-4 py-6">
-        {/* <ComposeCard onCreatePost={handleCreatePost} dictionary={composeDictionary} /> */}
-        <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 text-amber-800 dark:text-amber-200 p-4 rounded-r-lg mb-6" role="alert">
-          <p className="font-bold">Feature Temporarily Paused</p>
-          <p>Post creation is currently disabled to ensure a smooth launch. It will be re-enabled shortly!</p>
-        </div>
+        <ComposeCard onCreatePost={handleCreatePost} dictionary={composeDictionary} />
         {isLoading ? (
             <div className="space-y-4">
                 {[...Array(5)].map((_, i) => <SkeletonPostCard key={i} />)}
