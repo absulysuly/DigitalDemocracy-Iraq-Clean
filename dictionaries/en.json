@@ -88,5 +88,13 @@
   },
   "homeFeed": {
     "loading": "Brewing the latest posts from the Diwan..."
+  },
+  "dailyPoll": {
+    "title": "Daily Poll",
+    "loading": "Loading poll...",
+    "voted": "You voted for:",
+    "votes": "votes",
+    "totalVotes": "Total votes:",
+    "error": "Failed to load poll"
   }
 }

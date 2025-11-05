@@ -1,5 +1,5 @@
 
-import { Candidate, Governorate, Stats, PaginatedCandidates, Party, Post, Poll, User } from './types';
+import { Candidate, Governorate, Stats, PaginatedCandidates, Party, Post, Poll, User, VoteResult } from './types';
 
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
@@ -198,5 +198,31 @@ export const likePost = async (postId: string): Promise<{ success: boolean }> =>
   // the frontend is attempting to communicate with a real backend service.
   return apiRequest(`/api/posts/${postId}/like`, {
     method: 'POST',
+  });
+};
+
+export const voteForCandidate = async (candidateId: string): Promise<VoteResult> => {
+  // NOTE: In a real application, this would send the vote to the backend
+  // For now, we'll return a mock success response
+  return apiRequest<VoteResult>('/api/votes/candidate', {
+    method: 'POST',
+    body: JSON.stringify({ candidateId }),
+    cache: 'no-store', // Don't cache voting requests
+  });
+};
+
+export const votePoll = async (pollId: string, optionId: string): Promise<VoteResult> => {
+  // NOTE: In a real application, this would send the vote to the backend
+  return apiRequest<VoteResult>('/api/votes/poll', {
+    method: 'POST',
+    body: JSON.stringify({ pollId, optionId }),
+    cache: 'no-store', // Don't cache voting requests
+  });
+};
+
+export const getUserVotes = async (userId: string): Promise<{ candidateVote?: string; pollVotes: Record<string, string> }> => {
+  // NOTE: This would fetch the user's voting history from the backend
+  return apiRequest(`/api/votes/user/${userId}`, {
+    cache: 'no-store',
   });
 };
