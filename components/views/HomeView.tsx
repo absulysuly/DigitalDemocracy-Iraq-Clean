@@ -12,9 +12,13 @@ import { toast } from 'react-hot-toast';
 import { generateSocialPost } from '@/services/geminiService';
 import { fetchPosts, createPost } from '@/lib/api';
 import SkeletonPostCard from '@/components/SkeletonPostCard';
+import DailyPoll from '../social/DailyPoll';
 
 // Mock current user
 const currentUser: User = {
+    // FIX: Added missing 'id' and 'email' properties to satisfy the User type.
+    id: 'current_user',
+    email: 'you@example.com',
     name: 'You',
     avatar: 'https://i.pravatar.cc/48?u=current_user',
     verified: false,
@@ -188,6 +192,7 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
 
   // Defensive check for dictionary prop to avoid crashes on hydration errors.
   const composeDictionary = dictionary?.compose || {};
+  const pollDictionary = dictionary?.dailyPoll || {};
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -256,7 +261,7 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
         toast.success('Your post has been published!');
     } catch (error) {
         console.error("Failed to create post:", error);
-        toast.error("Could not publish your post. Please try againA
+        toast.error("Could not publish your post. Please try again.");
         // Revert the optimistic update on failure
         setPosts(prevPosts => prevPosts.filter(p => p.id !== optimisticPost.id));
     } finally {
@@ -270,6 +275,7 @@ export default function HomeView({ lang, dictionary }: { lang: Locale; dictionar
   return (
     <div {...handlers} className="min-h-screen">
       <div className="max-w-2xl mx-auto px-4 py-6">
+        <DailyPoll dictionary={pollDictionary} />
         <ComposeCard onCreatePost={handleCreatePost} dictionary={composeDictionary} />
         {isLoading ? (
             <div className="space-y-4">
