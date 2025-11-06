@@ -105,3 +105,18 @@ export interface ChatMessage {
   role: 'user' | 'model';
   content: string;
 }
+
+export interface Vote {
+  id: string;
+  userId: string;
+  candidateId?: string;
+  pollId?: string;
+  pollOptionId?: string;
+  timestamp: string;
+}
+
+export interface VoteResult {
+  success: boolean;
+  message: string;
+  vote?: Vote;
+}
