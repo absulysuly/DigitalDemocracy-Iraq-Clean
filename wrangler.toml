@@ -1,1 +1,11 @@
+name = "digitaldemocracy-iraq"
+compatibility_date = "2024-11-04"
+pages_build_output_dir = ".next"
 
+[build]
+command = "npm install && npm run build"
+
+[build.environment]
+NODE_VERSION = "20"
+NEXT_PUBLIC_API_BASE_URL = "https://digitaldemocracy-iraq-production.up.railway.app"
+NEXT_PUBLIC_GEMINI_API_KEY = "AIzaSyBmy5qQ9oXPsan3cIa9tMHsLpN47sR0zb0"
