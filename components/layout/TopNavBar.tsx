@@ -19,15 +19,17 @@ interface TopNavBarProps {
   dictionary: NavigationDictionary;
 }
 
-const navLinkConfig: Array<{
+type NavLinkConfig = {
   href: string;
   labelKey: keyof NavigationDictionary;
   icon?: ReactNode;
-}> = [
+};
+
+const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
   { href: '/', labelKey: 'home' },
   { href: '/discover', labelKey: 'discover' },
   { href: '/candidates', labelKey: 'candidates' },
-  { href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} /> },
+  { href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} aria-hidden="true" /> },
   { href: '/profile', labelKey: 'profile' },
 ];
 
@@ -41,7 +43,7 @@ export default function TopNavBar({ lang, dictionary }: TopNavBarProps) {
               <span className="font-arabic text-2xl font-bold text-gray-900 dark:text-white">ديوان</span>
             </Link>
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              {navLinkConfig.map(({ href, labelKey, icon }) => (
+              {NAV_LINKS.map(({ href, labelKey, icon }) => (
                 <Link
                   key={labelKey}
                   href={`/${lang}${href}`}
