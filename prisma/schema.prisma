@@ -1,0 +1,133 @@
+// Hamlet MVP Database Schema
+// Minimal schema for shippable MVP
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User model - Simple authentication
+model User {
+  id          String   @id @default(cuid())
+  name        String
+  email       String?  @unique
+  phone       String?  @unique
+  governorate String   // One of 18 Iraqi governorates
+  university  String?  // Optional for students
+  avatar      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  posts       Post[]
+  likes       Like[]
+  comments    Comment[]
+}
+
+// Post model - Social feed content
+model Post {
+  id          String   @id @default(cuid())
+  content     String
+  image       String?  // URL to uploaded image
+  governorate String   // Filter posts by governorate
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes    Like[]
+  comments Comment[]
+
+  @@index([governorate])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Like model - Post interactions
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([postId])
+}
+
+// Comment model - Post comments
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([userId])
+}
+
+// Place model - Iraq Compass directory
+model Place {
+  id          String   @id @default(cuid())
+  name        String
+  name_ar     String?
+  name_ku     String?
+  category    String   // Dining, Entertainment, Shopping, etc.
+  governorate String
+  address     String?
+  description String?
+  description_ar String?
+  description_ku String?
+  images      String   // JSON array of image URLs
+  phone       String?
+  website     String?
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([governorate])
+  @@index([category])
+}
+
+// Event model - Iraq Compass events
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  title_ar    String?
+  title_ku    String?
+  description String?
+  description_ar String?
+  description_ku String?
+  governorate String
+  category    String
+  date        DateTime
+  endDate     DateTime?
+  location    String?
+  address     String?
+  image       String?
+  images      String?  // JSON array of image URLs
+  organizer   String?
+  website     String?
+  ticketUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([governorate])
+  @@index([category])
+  @@index([date])
+}
