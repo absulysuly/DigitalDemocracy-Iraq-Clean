@@ -1,5 +1,6 @@
 import { getDictionary } from "@/lib/dictionaries";
 import { Locale } from "@/lib/i18n-config";
+import CategoryGrid from "@/components/compass/CategoryGrid";
 
 export default async function CompassPage({
   params: { lang }
@@ -9,24 +10,21 @@ export default async function CompassPage({
   const dictionary = await getDictionary(lang);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Iraq Compass
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8">
-          Discover places, events, and local businesses across Iraq
-        </p>
-
-        <div className="bg-gradient-to-br from-teal-500/10 to-purple-500/10 rounded-xl p-12 text-center">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-4 pb-20 md:pb-4">
+      <div className="container mx-auto px-4 max-w-6xl">
+        {/* Header */}
+        <div className="mb-8 text-center">
           <div className="text-6xl mb-4">🧭</div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-            Coming Soon
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            We're building Iraq's local discovery platform. Stay tuned!
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+            Iraq Compass
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 text-lg">
+            Discover places, events, and local businesses across Iraq
           </p>
         </div>
+
+        {/* Category Grid */}
+        <CategoryGrid lang={lang} />
       </div>
     </div>
   );
