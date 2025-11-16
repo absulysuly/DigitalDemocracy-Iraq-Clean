@@ -6,9 +6,10 @@
   },
   "navigation": {
     "home": "Home",
-    "discover": "Discover",
-    "candidates": "Candidates",
-    "profile": "Profile"
+    "compass": "Compass",
+    "teahouse": "TeaHouse",
+    "profile": "Profile",
+    "candidates": "Candidates"
   },
   "page": {
     "candidates": {

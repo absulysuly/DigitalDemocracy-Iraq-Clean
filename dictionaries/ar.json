@@ -6,9 +6,10 @@
   },
   "navigation": {
     "home": "الرئيسية",
-    "discover": "اكتشف",
-    "candidates": "المرشحون",
-    "profile": "الملف الشخصي"
+    "compass": "البوصلة",
+    "teahouse": "بيت الشاي",
+    "profile": "الملف الشخصي",
+    "candidates": "المرشحون"
   },
   "page": {
     "candidates": {
