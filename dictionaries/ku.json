@@ -6,9 +6,10 @@
   },
   "navigation": {
     "home": "سەرەکی",
-    "discover": "دۆزینەوە",
-    "candidates": "کاندیدەکان",
-    "profile": "پرۆفایل"
+    "compass": "قیبلەنما",
+    "teahouse": "چایخانە",
+    "profile": "پرۆفایل",
+    "candidates": "کاندیدەکان"
   },
   "page": {
     "candidates": {

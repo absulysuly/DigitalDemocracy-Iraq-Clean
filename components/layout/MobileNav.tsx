@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { Home, Search, Users, User, Coffee } from 'lucide-react';
+import { Home, Compass, Coffee, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 export default function MobileNav({ lang, dictionary }: { lang: string, dictionary: any }) {
@@ -8,8 +8,7 @@ export default function MobileNav({ lang, dictionary }: { lang: string, dictiona
   
   const navLinks = [
       { icon: Home, label: dictionary.home, href: '/' },
-      { icon: Search, label: dictionary.discover, href: '/discover' },
-      { icon: Users, label: dictionary.candidates, href: '/candidates' },
+      { icon: Compass, label: dictionary.compass, href: '/compass' },
       { icon: Coffee, label: dictionary.teahouse, href: '/teahouse' },
       { icon: User, label: dictionary.profile, href: '/profile' }
   ];
@@ -24,7 +23,7 @@ export default function MobileNav({ lang, dictionary }: { lang: string, dictiona
                 <Link
                     key={href}
                     href={fullPath}
-                    className={`flex flex-col items-center gap-1 px-2 py-2 transition w-1/5 ${
+                    className={`flex flex-col items-center gap-1 px-2 py-2 transition w-1/4 ${
                         isActive 
                         ? 'text-iraq-red' 
                         : 'text-gray-600 dark:text-gray-400 hover:text-iraq-red'

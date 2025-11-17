@@ -3,13 +3,12 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import type { Locale } from '@/lib/i18n-config';
-import { Coffee } from 'lucide-react';
+import { Coffee, Compass } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
 
 interface NavigationDictionary {
   home: string;
-  discover: string;
-  candidates: string;
+  compass: string;
   teahouse: string;
   profile: string;
 }
@@ -27,8 +26,7 @@ type NavLinkConfig = {
 
 const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
   { href: '/', labelKey: 'home' },
-  { href: '/discover', labelKey: 'discover' },
-  { href: '/candidates', labelKey: 'candidates' },
+  { href: '/compass', labelKey: 'compass', icon: <Compass size={16} aria-hidden="true" /> },
   { href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} aria-hidden="true" /> },
   { href: '/profile', labelKey: 'profile' },
 ];
