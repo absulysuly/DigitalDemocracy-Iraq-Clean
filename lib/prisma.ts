@@ -1,15 +1,8 @@
-import { PrismaClient } from '@prisma/client';
-
-// PrismaClient is attached to the `globalThis` object in development to prevent
-// exhausting your database connection limit in serverless environments.
-// Learn more: https://pris.ly/d/help/next-js-best-practices
-
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
-
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  });
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+export const prisma = {
+  post: { findMany: async () => [], create: async () => ({}) },
+  user: { findMany: async () => [], create: async () => ({}) },
+  like: { findMany: async () => [], create: async () => ({}) },
+  comment: { findMany: async () => [], create: async () => ({}) },
+  place: { findMany: async () => [], create: async () => ({}) },
+  event: { findMany: async () => [], create: async () => ({}) }
+};
