@@ -91,3 +91,128 @@ You're ready to deploy! Follow these steps carefully.
     *   Once the deployment is finished, Cloudflare will give you a unique URL (e.g., `digital-diwan.pages.dev`). Your application is now live!
 
 Cloudflare will automatically redeploy your site every time you push new changes to your connected branch. You've got this!
+
+---
+
+## 🚀 Final Deployment Checklist (Vercel with Postgres)
+
+Complete guide to deploy Hamlet MVP to Vercel with a managed Postgres database.
+
+### Prerequisites
+
+1. **Install Vercel CLI** (one-time setup):
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Login to Vercel**:
+   ```bash
+   vercel login
+   ```
+
+### Step 1: Create Postgres Database on Vercel
+
+1. Go to your [Vercel Dashboard](https://vercel.com/dashboard)
+2. Navigate to **Storage** tab
+3. Click **Create Database** → Select **Postgres**
+4. Choose a name for your database (e.g., `hamlet-db`)
+5. Select the region closest to your users (e.g., `fra1` for Frankfurt)
+6. Click **Create**
+
+Vercel will automatically generate a `DATABASE_URL` environment variable and add it to your project.
+
+### Step 2: Link Your Project
+
+From your project directory:
+
+```bash
+# Link this repository to your Vercel project
+vercel link
+
+# Pull environment variables from Vercel (including DATABASE_URL)
+vercel env pull .env.local
+```
+
+### Step 3: Configure Environment Variables
+
+Your `.env.local` file should now contain `DATABASE_URL` from Vercel. If you need additional variables:
+
+1. Go to **Project Settings** → **Environment Variables** in Vercel Dashboard
+2. Add these optional variables:
+
+| Variable Name | Value | Environment |
+|---------------|-------|-------------|
+| `API_KEY` | Your Google Gemini API Key | Production, Preview, Development |
+| `NODE_ENV` | `production` | Production |
+
+### Step 4: Deploy to Vercel
+
+```bash
+# Deploy to production
+vercel --prod
+```
+
+Vercel will:
+- Install dependencies
+- Run `prisma generate` (via postinstall script)
+- Build your Next.js application
+- Deploy to production
+
+### Step 5: Run Database Migrations
+
+After successful deployment, initialize your database:
+
+```bash
+# Apply Prisma migrations
+npx prisma migrate deploy
+
+# Seed the database with initial data
+npm run db:seed
+```
+
+### Step 6: Verify Deployment
+
+Test your deployed application:
+
+1. **Home Page**: Visit your Vercel URL (e.g., `https://hamlet-mvp.vercel.app`)
+2. **API Endpoints**:
+   - `/api/posts?governorate=Baghdad` - Should return posts
+   - `/api/places` - Should return Iraq Compass places
+   - `/api/events` - Should return events
+3. **Arabic/Kurdish Support**: Check RTL layout renders correctly
+
+### Troubleshooting
+
+**Build fails with "DATABASE_URL not found":**
+- Run `vercel env pull .env.local` to sync environment variables
+- Verify database was created in Vercel Storage tab
+
+**Database connection errors:**
+- Check that `DATABASE_URL` includes `?sslmode=require` for Vercel Postgres
+- Verify the database is in the same region as your deployment
+
+**Prisma Client errors:**
+- Ensure `postinstall` script is running: `"postinstall": "prisma generate"`
+- Check build logs for Prisma generation errors
+
+### Continuous Deployment
+
+Vercel automatically deploys when you push to your connected branch:
+
+```bash
+git add .
+git commit -m "Your commit message"
+git push origin your-branch
+```
+
+### Local Development with Vercel Postgres
+
+To develop locally with your Vercel Postgres database:
+
+1. Pull environment variables: `vercel env pull .env.local`
+2. Run migrations: `npx prisma migrate dev`
+3. Start dev server: `npm run dev`
+
+---
+
+**✅ Vercel-ready. You may now deploy Hamlet MVP live.**
