@@ -118,7 +118,7 @@ export const MOCK_POSTS: MockPost[] = [
   },
   {
     id: '4',
-    content: 'Excited to announce our university's cultural festival next month! Who's coming? 🎉',
+    content: "Excited to announce our university's cultural festival next month! Who's coming? 🎉",
     governorate: 'Nineveh',
     userId: '4',
     user: MOCK_USERS[3],

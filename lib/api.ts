@@ -82,7 +82,7 @@ async function apiRequest<T>(
   // This function is updated to allow options (like `cache: 'no-store'`) to override defaults.
   // FIX: Refactored fetchOptions creation to avoid duplicate 'headers' property key.
   const { headers, ...otherOptions } = options;
-  const fetchOptions: RequestInit & { next?: { revalidate: number } } = {
+  const fetchOptions: any = {
     // Default: Revalidate every hour
     next: { revalidate: 3600 },
     // Apply other options from the caller, which may override defaults.

@@ -1,4 +1,4 @@
-import Skeleton from './UI/Skeleton';
+import Skeleton from './ui/Skeleton';
 
 export default function SkeletonPostCard() {
   return (

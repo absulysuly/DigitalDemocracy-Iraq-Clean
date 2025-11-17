@@ -4,7 +4,17 @@
 import { useState, useRef, useEffect } from 'react';
 import IraqiHeader from '../ui/IraqiHeader';
 import { Mic, Loader2, PhoneOff } from 'lucide-react';
-import { GoogleGenAI, LiveSession, LiveServerMessage, Modality, Blob as GenAIBlob } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
+
+type LiveSession = any;
+type LiveServerMessage = any;
+type GenAIBlob = any;
+
+const Modality = {
+  AUDIO: 'AUDIO',
+  VIDEO: 'VIDEO',
+  TEXT: 'TEXT'
+} as const;
 
 // Audio helper functions
 function encode(bytes: Uint8Array): string {
@@ -218,7 +228,7 @@ export default function TeaHouseView({ dictionary }: { dictionary: any }) {
                     },
                 },
                 config: {
-                    responseModalities: [Modality.AUDIO],
+                    responseModalities: [Modality.AUDIO as any],
                     outputAudioTranscription: {},
                     inputAudioTranscription: {},
                     systemInstruction: 'You are Naseem, a friendly and welcoming host in a digital Iraqi tea house. Engage users in warm, interesting conversation about daily life, culture, and positive topics in Iraq. Keep your responses relatively short and conversational.',

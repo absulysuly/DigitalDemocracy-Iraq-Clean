@@ -3,7 +3,7 @@
 import { MapPin } from 'lucide-react';
 import { GOVERNORATES, Governorate } from '@/lib/mockData';
 
-interface GovernorateSelector Props {
+interface GovernorateSelectorProps {
   selected?: string;
   onChange: (governorate: string) => void;
 }
