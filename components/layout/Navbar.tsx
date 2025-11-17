@@ -13,9 +13,9 @@ export default function Navbar({
 }) {
   const navLinks = [
     { href: '/', label: dictionary.home },
-    { href: '/candidates', label: dictionary.candidates },
-    { href: '/governorates', label: dictionary.governorates },
-    { href: '/stats', label: dictionary.statistics },
+    { href: '/compass', label: dictionary.compass },
+    { href: '/teahouse', label: dictionary.teahouse },
+    { href: '/discover', label: dictionary.discover },
     { href: '/about', label: dictionary.about },
   ];
 

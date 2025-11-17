@@ -4,9 +4,8 @@
   "installCommand": "npm install",
   "devCommand": "npm run dev",
   "outputDirectory": ".next",
-  "regions": ["iad1"],
+  "regions": ["fra1"],
   "env": {
-    "NODE_VERSION": "20",
-    "NEXT_PUBLIC_API_BASE_URL": "https://hamlet-unified-complete-2027-production.up.railway.app"
+    "NODE_VERSION": "20"
   }
 }
