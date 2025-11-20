@@ -4,7 +4,15 @@ import { FEATURE_FLAGS } from '@/config/featureFlags';
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
 const ELECTION_DISABLED = !FEATURE_FLAGS.ELECTION_ENABLED;
-const ELECTION_ENDPOINT_SEGMENTS = ['candidates', 'governorates', 'stats', 'analytics', 'poll', 'vote'];
+const ELECTION_ENDPOINT_SEGMENTS = [
+  'candidates',
+  'governorates',
+  'stats',
+  'analytics',
+  'poll',
+  'vote',
+  'election',
+];
 const DISABLED_API_RESPONSE = { disabled: true } as const;
 
 const isElectionEndpoint = (endpoint: string) =>
