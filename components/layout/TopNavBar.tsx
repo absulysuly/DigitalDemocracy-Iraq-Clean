@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import type { Locale } from '@/lib/i18n-config';
 import { Coffee, Compass } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
+import { filterElectionNavLinks } from './navigationFilters';
 
 interface NavigationDictionary {
   home: string;
@@ -26,21 +27,15 @@ type NavLinkConfig = {
   icon?: ReactNode;
 };
 
-const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
-  { id: 'home', href: '/', labelKey: 'home' },
-  { id: 'compass', href: '/compass', labelKey: 'compass', icon: <Compass size={16} aria-hidden="true" /> },
-  { id: 'teahouse', href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} aria-hidden="true" /> },
-  { id: 'profile', href: '/profile', labelKey: 'profile' },
-];
-
-const shouldIncludeNavItem = (link: NavLinkConfig, electionEnabled: boolean) => {
-  if (electionEnabled) return true;
-  const blockedKeywords = ['election', 'Election', 'Dashboard', 'Analytics', 'ElectionManagementDashboard'];
-  return !blockedKeywords.some((keyword) => link.id.includes(keyword));
-};
-
 export default function TopNavBar({ lang, dictionary, electionEnabled = true }: TopNavBarProps) {
-  const filteredLinks = NAV_LINKS.filter((link) => shouldIncludeNavItem(link, electionEnabled));
+  const navLinks: Array<NavLinkConfig & { label: string }> = [
+    { id: 'home', href: '/', labelKey: 'home', label: dictionary.home },
+    { id: 'compass', href: '/compass', labelKey: 'compass', icon: <Compass size={16} aria-hidden="true" />, label: dictionary.compass },
+    { id: 'teahouse', href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} aria-hidden="true" />, label: dictionary.teahouse },
+    { id: 'profile', href: '/profile', labelKey: 'profile', label: dictionary.profile },
+  ];
+
+  const filteredLinks = filterElectionNavLinks(navLinks, electionEnabled);
 
   return (
     <header className="sticky top-0 z-40 hidden bg-white/80 shadow-sm backdrop-blur-md dark:bg-gray-900/80 md:block">
@@ -51,14 +46,14 @@ export default function TopNavBar({ lang, dictionary, electionEnabled = true }: 
               <span className="font-arabic text-2xl font-bold text-gray-900 dark:text-white">ديوان</span>
             </Link>
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              {filteredLinks.map(({ href, labelKey, icon }) => (
+              {filteredLinks.map(({ href, label, labelKey, icon }) => (
                 <Link
                   key={labelKey}
                   href={`/${lang}${href}`}
                   className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
                 >
                   {icon}
-                  {dictionary[labelKey]}
+                  {label}
                 </Link>
               ))}
             </div>
