@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import type { Locale } from '@/lib/i18n-config';
 import { Coffee, Compass } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
-import { shouldShowNavItem } from './navFilter';
+import { shouldDisplayNavigationItem } from './navigationFilters';
 
 interface NavigationDictionary {
   home: string;
@@ -36,11 +36,14 @@ const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
 
 export default function TopNavBar({ lang, dictionary, electionEnabled = true }: TopNavBarProps) {
   const filteredLinks = NAV_LINKS.filter((link) =>
-    shouldShowNavItem({
-      id: link.id,
-      href: link.href,
-      label: dictionary[link.labelKey],
-    }, electionEnabled)
+    shouldDisplayNavigationItem(
+      {
+        id: link.id,
+        href: link.href,
+        label: dictionary[link.labelKey],
+      },
+      electionEnabled
+    )
   );
 
   return (
