@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import type { Locale } from '@/lib/i18n-config';
 import { Coffee, Compass } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
+import { shouldShowNavItem } from './navFilter';
 
 interface NavigationDictionary {
   home: string;
@@ -33,14 +34,14 @@ const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
   { id: 'profile', href: '/profile', labelKey: 'profile' },
 ];
 
-const shouldIncludeNavItem = (link: NavLinkConfig, electionEnabled: boolean) => {
-  if (electionEnabled) return true;
-  const blockedKeywords = ['election', 'Election', 'Dashboard', 'Analytics', 'ElectionManagementDashboard'];
-  return !blockedKeywords.some((keyword) => link.id.includes(keyword));
-};
-
 export default function TopNavBar({ lang, dictionary, electionEnabled = true }: TopNavBarProps) {
-  const filteredLinks = NAV_LINKS.filter((link) => shouldIncludeNavItem(link, electionEnabled));
+  const filteredLinks = NAV_LINKS.filter((link) =>
+    shouldShowNavItem({
+      id: link.id,
+      href: link.href,
+      label: dictionary[link.labelKey],
+    }, electionEnabled)
+  );
 
   return (
     <header className="sticky top-0 z-40 hidden bg-white/80 shadow-sm backdrop-blur-md dark:bg-gray-900/80 md:block">

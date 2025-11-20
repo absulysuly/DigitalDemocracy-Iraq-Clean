@@ -120,6 +120,14 @@ export const fetchCurrentUser = async (token: string): Promise<User> => {
 };
 
 export const fetchDailyPoll = async (): Promise<Poll> => {
+  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+    return {
+      id: 'polls-disabled',
+      question: 'Election polling is disabled.',
+      options: [],
+      totalVotes: 0,
+    };
+  }
   // MOCK IMPLEMENTATION
   // In a real app, this would fetch from an endpoint like /api/polls/daily
   return new Promise(resolve => {
@@ -191,8 +199,10 @@ export const fetchCandidateById = async (id: string): Promise<Candidate> => {
         return {
             id,
             name: 'Election features are disabled',
+            name_ar: 'الانتخابات معطلة',
             party: 'FeatureFlag',
             governorate: 'Unavailable',
+            gender: 'male',
             created_at: now,
             updated_at: now,
         };

@@ -2,26 +2,23 @@
 import Link from 'next/link';
 import { Home, Compass, Coffee, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { shouldShowNavItem } from './navFilter';
 
 type MobileNavProps = { lang: string; dictionary: any; electionEnabled?: boolean };
-
-const shouldIncludeNavItem = (id: string, electionEnabled: boolean) => {
-  if (electionEnabled) return true;
-  const blockedKeywords = ['election', 'Election', 'Dashboard', 'Analytics', 'ElectionManagementDashboard'];
-  return !blockedKeywords.some((keyword) => id.includes(keyword));
-};
 
 export default function MobileNav({ lang, dictionary, electionEnabled = true }: MobileNavProps) {
   const pathname = usePathname();
 
   const navLinks = [
-      { id: 'home', icon: Home, label: dictionary.home, href: '/' },
-      { id: 'compass', icon: Compass, label: dictionary.compass, href: '/compass' },
-      { id: 'teahouse', icon: Coffee, label: dictionary.teahouse, href: '/teahouse' },
-      { id: 'profile', icon: User, label: dictionary.profile, href: '/profile' }
+    { id: 'home', icon: Home, label: dictionary.home, href: '/' },
+    { id: 'compass', icon: Compass, label: dictionary.compass, href: '/compass' },
+    { id: 'teahouse', icon: Coffee, label: dictionary.teahouse, href: '/teahouse' },
+    { id: 'profile', icon: User, label: dictionary.profile, href: '/profile' }
   ];
 
-  const filteredNavLinks = navLinks.filter(({ id }) => shouldIncludeNavItem(id, electionEnabled));
+  const filteredNavLinks = navLinks.filter(({ id, label, href }) =>
+    shouldShowNavItem({ id, label, href }, electionEnabled)
+  );
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 z-40 backdrop-blur-md">
