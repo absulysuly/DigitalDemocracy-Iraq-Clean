@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { Locale } from '@/lib/i18n-config';
+import type { LucideIcon } from 'lucide-react';
 import { Coffee, Compass } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
 import { shouldDisplayNavigationItem } from './navigationFilters';
@@ -23,7 +24,7 @@ type NavLinkConfig = {
   id: string;
   href: string;
   labelKey: keyof NavigationDictionary;
-  icon?: typeof Compass;
+  icon?: LucideIcon;
 };
 
 const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
@@ -33,7 +34,7 @@ const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
   { id: 'profile', href: '/profile', labelKey: 'profile' },
 ];
 
-export default function TopNavBar({ lang, dictionary, electionEnabled = true }: TopNavBarProps) {
+export function TopNavBar({ lang, dictionary, electionEnabled = true }: TopNavBarProps) {
   const filteredLinks = NAV_LINKS.filter((link) =>
     shouldDisplayNavigationItem(
       {

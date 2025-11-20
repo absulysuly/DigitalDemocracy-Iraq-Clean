@@ -1,7 +1,7 @@
 
 import { Inter, Noto_Sans_Arabic } from 'next/font/google';
 import { dir } from 'i18next';
-import TopNavBar from '@/components/layout/TopNavBar';
+import { TopNavBar } from '@/components/layout/TopNavBar';
 import MobileNav from '@/components/layout/MobileNav';
 import ChatWidget from '@/components/social/ChatWidget';
 import { ThemeProvider } from '@/components/ThemeProvider';
