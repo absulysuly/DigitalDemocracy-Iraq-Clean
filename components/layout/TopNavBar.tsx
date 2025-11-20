@@ -2,8 +2,7 @@
 
 import Link from 'next/link';
 import type { Locale } from '@/lib/i18n-config';
-import type { LucideIcon } from 'lucide-react';
-import { Coffee, Compass } from 'lucide-react';
+import { type LucideIcon, Coffee, Compass } from 'lucide-react';
 import NotificationBell from '../social/NotificationBell';
 import { shouldDisplayNavigationItem } from './navigationFilters';
 
