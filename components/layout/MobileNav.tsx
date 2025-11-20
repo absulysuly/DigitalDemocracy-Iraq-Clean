@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { Home, Compass, Coffee, User } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { shouldShowNavItem } from './navFilter';
+import { shouldDisplayNavigationItem } from './navigationFilters';
 
 type MobileNavProps = { lang: string; dictionary: any; electionEnabled?: boolean };
 
@@ -17,7 +17,7 @@ export default function MobileNav({ lang, dictionary, electionEnabled = true }: 
   ];
 
   const filteredNavLinks = navLinks.filter(({ id, label, href }) =>
-    shouldShowNavItem({ id, label, href }, electionEnabled)
+    shouldDisplayNavigationItem({ id, label, href }, electionEnabled)
   );
 
   return (
