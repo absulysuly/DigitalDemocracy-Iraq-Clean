@@ -1,9 +1,51 @@
-
 import { Candidate, Governorate, Stats, PaginatedCandidates, Party, Post, Poll, User, VoteResult } from './types';
 import { FEATURE_FLAGS } from '@/config/featureFlags';
 
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
+const ELECTION_DISABLED = !FEATURE_FLAGS.ELECTION_ENABLED;
+
+const DISABLED_POLL: Poll = {
+  id: 'polls-disabled',
+  question: 'Election polling is disabled.',
+  options: [],
+  totalVotes: 0,
+};
+
+const createDisabledCandidateList = (params: { page?: number; limit?: number }): PaginatedCandidates => ({
+  data: [],
+  total: 0,
+  page: params.page ?? 1,
+  limit: params.limit ?? 0,
+});
+
+const createDisabledCandidateDetail = (id: string): Candidate => {
+  const now = new Date().toISOString();
+  return {
+    id,
+    name: 'Election features are disabled',
+    name_ar: 'الانتخابات معطلة',
+    party: 'FeatureFlag',
+    governorate: 'Unavailable',
+    gender: 'male',
+    created_at: now,
+    updated_at: now,
+  };
+};
+
+const createDisabledStats = (): Stats => ({
+  total_candidates: 0,
+  total_parties: 0,
+  total_governorates: 0,
+  last_updated: new Date().toISOString(),
+  gender_distribution: { Male: 0, Female: 0 },
+  candidates_per_governorate: [],
+});
+
+const DISABLED_VOTE_RESULT: VoteResult = {
+  success: true,
+  message: 'Election features disabled. No vote submitted.',
+};
 
 /**
  * Attempts to fetch a resource with a retry mechanism using exponential backoff.
@@ -120,13 +162,8 @@ export const fetchCurrentUser = async (token: string): Promise<User> => {
 };
 
 export const fetchDailyPoll = async (): Promise<Poll> => {
-  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
-    return {
-      id: 'polls-disabled',
-      question: 'Election polling is disabled.',
-      options: [],
-      totalVotes: 0,
-    };
+  if (ELECTION_DISABLED) {
+    return DISABLED_POLL;
   }
   // MOCK IMPLEMENTATION
   // In a real app, this would fetch from an endpoint like /api/polls/daily
@@ -173,13 +210,8 @@ export const fetchCandidates = async (params: {
     gender?: 'male' | 'female',
     sort?: string,
 }): Promise<PaginatedCandidates> => {
-    if (!FEATURE_FLAGS.ELECTION_ENABLED) {
-        return {
-            data: [],
-            total: 0,
-            page: params.page ?? 1,
-            limit: params.limit ?? 0,
-        };
+    if (ELECTION_DISABLED) {
+        return createDisabledCandidateList(params);
     }
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append('page', params.page.toString());
@@ -194,46 +226,29 @@ export const fetchCandidates = async (params: {
 };
 
 export const fetchCandidateById = async (id: string): Promise<Candidate> => {
-    if (!FEATURE_FLAGS.ELECTION_ENABLED) {
-        const now = new Date().toISOString();
-        return {
-            id,
-            name: 'Election features are disabled',
-            name_ar: 'الانتخابات معطلة',
-            party: 'FeatureFlag',
-            governorate: 'Unavailable',
-            gender: 'male',
-            created_at: now,
-            updated_at: now,
-        };
+    if (ELECTION_DISABLED) {
+        return createDisabledCandidateDetail(id);
     }
     return apiRequest<Candidate>(`/api/candidates/${id}`);
 };
 
 export const fetchGovernorates = async (): Promise<Governorate[]> => {
-    if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+    if (ELECTION_DISABLED) {
         return [];
     }
     return apiRequest<Governorate[]>('/api/governorates');
 };
 
 export const fetchParties = async (): Promise<Party[]> => {
-    if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+    if (ELECTION_DISABLED) {
         return [];
     }
     return apiRequest<Party[]>('/api/parties');
 };
 
 export const fetchStats = async (): Promise<Stats> => {
-    if (!FEATURE_FLAGS.ELECTION_ENABLED) {
-        return {
-            total_candidates: 0,
-            total_parties: 0,
-            total_governorates: 0,
-            last_updated: new Date().toISOString(),
-            gender_distribution: { Male: 0, Female: 0 },
-            candidates_per_governorate: [],
-        };
+    if (ELECTION_DISABLED) {
+        return createDisabledStats();
     }
     return apiRequest<Stats>('/api/stats');
 };
@@ -248,11 +263,8 @@ export const likePost = async (postId: string): Promise<{ success: boolean }> =>
 };
 
 export const voteForCandidate = async (candidateId: string): Promise<VoteResult> => {
-  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
-    return {
-      success: true,
-      message: 'Election features disabled. No vote submitted.',
-    };
+  if (ELECTION_DISABLED) {
+    return DISABLED_VOTE_RESULT;
   }
   // NOTE: In a real application, this would send the vote to the backend
   // For now, we'll return a mock success response
@@ -264,11 +276,8 @@ export const voteForCandidate = async (candidateId: string): Promise<VoteResult>
 };
 
 export const votePoll = async (pollId: string, optionId: string): Promise<VoteResult> => {
-  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
-    return {
-      success: true,
-      message: 'Election features disabled. No vote submitted.',
-    };
+  if (ELECTION_DISABLED) {
+    return DISABLED_VOTE_RESULT;
   }
   // NOTE: In a real application, this would send the vote to the backend
   return apiRequest<VoteResult>('/api/votes/poll', {
@@ -279,7 +288,7 @@ export const votePoll = async (pollId: string, optionId: string): Promise<VoteRe
 };
 
 export const getUserVotes = async (userId: string): Promise<{ candidateVote?: string; pollVotes: Record<string, string> }> => {
-  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+  if (ELECTION_DISABLED) {
     return { pollVotes: {} };
   }
   // NOTE: This would fetch the user's voting history from the backend
