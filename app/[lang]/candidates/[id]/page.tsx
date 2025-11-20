@@ -1,10 +1,13 @@
 import { notFound } from 'next/navigation';
-import Feed from '@/components/social/Feed';
-import { fetchCandidateById } from '@/lib/api';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { Post } from '@/lib/types';
-import { Locale } from '@/lib/i18n-config';
 import { GoogleGenAI, Type } from '@google/genai';
+import DisabledNotice from '@/components/elections/DisabledNotice';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
+import { fetchCandidateById } from '@/lib/api';
+import { Locale } from '@/lib/i18n-config';
+import { getDictionary } from '@/lib/dictionaries';
+import { Post } from '@/lib/types';
 
 async function generateCandidatePosts(
   candidate: Awaited<ReturnType<typeof fetchCandidateById>>, 
@@ -112,11 +115,23 @@ function fallbackPosts(
   ];
 }
 
-export default async function CandidatePage({ 
-  params 
-}: { 
-  params: { id: string; lang: Locale } 
+export default async function CandidatePage({
+  params
+}: {
+  params: { id: string; lang: Locale }
 }) {
+  const dictionary = await getDictionary(params.lang);
+
+  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+    return (
+      <DisabledNotice
+        title={dictionary.page.candidates.title}
+        description="Election features are disabled. Set VITE_ENABLE_ELECTIONS=true or NEXT_PUBLIC_ENABLE_ELECTIONS=true to view candidate profiles."
+      />
+    );
+  }
+
+  const Feed = dynamic(() => import('@/components/social/Feed'), { ssr: false });
   const candidate = await fetchCandidateById(params.id);
   if (!candidate) notFound();
 
