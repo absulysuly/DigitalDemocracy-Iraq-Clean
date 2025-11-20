@@ -2,9 +2,7 @@ import { fetchCandidates, fetchGovernorates } from '@/lib/api';
 import { Locale } from '@/lib/i18n-config';
 import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
-import CandidateCard from '@/components/candidates/CandidateCard';
-import FilterPanel from '@/components/candidates/FilterPanel';
-import Pagination from '@/components/candidates/Pagination';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
 
 export async function generateMetadata({
   params: { lang },
@@ -31,6 +29,20 @@ export default async function CandidatesPage({
   };
 }) {
   const dictionary = await getDictionary(lang);
+  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+    return (
+      <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="rounded-xl bg-white p-8 text-center shadow-md dark:bg-gray-800">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+            {dictionary.page.candidates.title}
+          </h1>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">
+            Election browsing is currently disabled. Set VITE_ENABLE_ELECTIONS=true to re-enable candidate discovery.
+          </p>
+        </div>
+      </div>
+    );
+  }
   const governorates = await fetchGovernorates();
 
   const currentPage = Number(searchParams?.page) || 1;
@@ -50,6 +62,9 @@ export default async function CandidatesPage({
   });
 
   const totalPages = Math.ceil(total / limit);
+  const CandidateCard = (await import('@/components/candidates/CandidateCard')).default;
+  const FilterPanel = (await import('@/components/candidates/FilterPanel')).default;
+  const Pagination = (await import('@/components/candidates/Pagination')).default;
 
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">

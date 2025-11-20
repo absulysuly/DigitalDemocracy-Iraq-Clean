@@ -16,22 +16,32 @@ interface NavigationDictionary {
 interface TopNavBarProps {
   lang: Locale;
   dictionary: NavigationDictionary;
+  electionEnabled?: boolean;
 }
 
 type NavLinkConfig = {
+  id: string;
   href: string;
   labelKey: keyof NavigationDictionary;
   icon?: ReactNode;
 };
 
 const NAV_LINKS: ReadonlyArray<NavLinkConfig> = [
-  { href: '/', labelKey: 'home' },
-  { href: '/compass', labelKey: 'compass', icon: <Compass size={16} aria-hidden="true" /> },
-  { href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} aria-hidden="true" /> },
-  { href: '/profile', labelKey: 'profile' },
+  { id: 'home', href: '/', labelKey: 'home' },
+  { id: 'compass', href: '/compass', labelKey: 'compass', icon: <Compass size={16} aria-hidden="true" /> },
+  { id: 'teahouse', href: '/teahouse', labelKey: 'teahouse', icon: <Coffee size={16} aria-hidden="true" /> },
+  { id: 'profile', href: '/profile', labelKey: 'profile' },
 ];
 
-export default function TopNavBar({ lang, dictionary }: TopNavBarProps) {
+const shouldIncludeNavItem = (link: NavLinkConfig, electionEnabled: boolean) => {
+  if (electionEnabled) return true;
+  const blockedKeywords = ['election', 'Election', 'Dashboard', 'Analytics', 'ElectionManagementDashboard'];
+  return !blockedKeywords.some((keyword) => link.id.includes(keyword));
+};
+
+export default function TopNavBar({ lang, dictionary, electionEnabled = true }: TopNavBarProps) {
+  const filteredLinks = NAV_LINKS.filter((link) => shouldIncludeNavItem(link, electionEnabled));
+
   return (
     <header className="sticky top-0 z-40 hidden bg-white/80 shadow-sm backdrop-blur-md dark:bg-gray-900/80 md:block">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -41,7 +51,7 @@ export default function TopNavBar({ lang, dictionary }: TopNavBarProps) {
               <span className="font-arabic text-2xl font-bold text-gray-900 dark:text-white">ديوان</span>
             </Link>
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
-              {NAV_LINKS.map(({ href, labelKey, icon }) => (
+              {filteredLinks.map(({ href, labelKey, icon }) => (
                 <Link
                   key={labelKey}
                   href={`/${lang}${href}`}

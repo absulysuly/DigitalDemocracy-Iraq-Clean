@@ -44,6 +44,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+### Feature Flags
+
+Election-specific surfaces are gated behind the `VITE_ENABLE_ELECTIONS` environment variable. It defaults to `false`, which hides election navigation and stubs election APIs. To preview election features locally or in staging, set `VITE_ENABLE_ELECTIONS=true` before running the app.
+
 ---
 
 ## 🚀 Final Deployment Checklist (Cloudflare Pages)

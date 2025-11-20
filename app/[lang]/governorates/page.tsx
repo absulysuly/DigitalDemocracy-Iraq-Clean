@@ -4,6 +4,7 @@ import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { FaLandmark } from 'react-icons/fa';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
 
 export async function generateMetadata({
   params: { lang },
@@ -23,6 +24,18 @@ export default async function GovernoratesPage({
   params: { lang: Locale };
 }) {
   const dictionary = await getDictionary(lang);
+  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+    return (
+      <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="rounded-xl bg-white p-8 text-center shadow-md dark:bg-gray-800">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{dictionary.page.governorates.title}</h1>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">
+            Election governorate browsing is currently disabled. Set VITE_ENABLE_ELECTIONS=true to re-enable this page.
+          </p>
+        </div>
+      </div>
+    );
+  }
   const governorates = await fetchGovernorates();
 
   return (
