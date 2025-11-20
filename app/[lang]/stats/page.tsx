@@ -3,8 +3,8 @@ import { Locale } from '@/lib/i18n-config';
 import { getDictionary } from '@/lib/dictionaries';
 import { Metadata } from 'next';
 import { Users, UserCheck, MapPin } from 'lucide-react';
-import StatsClient from '@/components/stats/StatsClient';
 import React from 'react';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
 
 export async function generateMetadata({
   params: { lang },
@@ -38,7 +38,22 @@ export default async function StatsPage({
   params: { lang: Locale };
 }) {
   const dictionary = await getDictionary(lang);
+
+  if (!FEATURE_FLAGS.ELECTION_ENABLED) {
+    return (
+      <div className="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="rounded-xl bg-white p-8 text-center shadow-md dark:bg-gray-800">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{dictionary.page.stats.title}</h1>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">
+            Election analytics are currently disabled. Set VITE_ENABLE_ELECTIONS=true to re-enable these insights.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const stats = await fetchStats();
+  const StatsClient = (await import('@/components/stats/StatsClient')).default;
 
   const mainStats = [
     { icon: Users, title: dictionary.page.stats.totalCandidates, value: stats.total_candidates },

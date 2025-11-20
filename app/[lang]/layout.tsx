@@ -12,6 +12,7 @@ import dynamic from 'next/dynamic';
 import { getDictionary } from '@/lib/dictionaries';
 import { Locale } from '@/lib/i18n-config';
 import { Toaster } from 'react-hot-toast';
+import { FEATURE_FLAGS } from '@/config/featureFlags';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const notoArabic = Noto_Sans_Arabic({ subsets: ['arabic'], variable: '--font-arabic' });
@@ -42,9 +43,17 @@ export default async function RootLayout({
           themes={['light', 'dark', 'ramadan']}
         >
           <Toaster position="bottom-center" />
-          <TopNavBar lang={lang} dictionary={dictionary.navigation} />
+          <TopNavBar
+            lang={lang}
+            dictionary={dictionary.navigation}
+            electionEnabled={FEATURE_FLAGS.ELECTION_ENABLED}
+          />
           <main className="pt-16 md:pt-0 pb-16 md:pb-0">{children}</main>
-          <MobileNav lang={lang} dictionary={dictionary.navigation} />
+          <MobileNav
+            lang={lang}
+            dictionary={dictionary.navigation}
+            electionEnabled={FEATURE_FLAGS.ELECTION_ENABLED}
+          />
           <DynamicChatWidget />
         </ThemeProvider>
       </body>
