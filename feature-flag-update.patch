@@ -1,0 +1,56 @@
+diff --git a/components/layout/navigationFilters.ts b/components/layout/navigationFilters.ts
+index 92888a3..6b10f83 100644
+--- a/components/layout/navigationFilters.ts
++++ b/components/layout/navigationFilters.ts
+@@ -1,12 +1,13 @@
+ export type FilterableNavLink = { id?: string; href?: string; label?: string };
+ 
+-const ELECTION_ROUTE_SEGMENTS = [
++export const ELECTION_ROUTE_SEGMENTS = [
+   'candidates',
+   'governorates',
+   'stats',
+   'analytics',
+   'poll',
+   'vote',
++  'election',
+ ];
+ 
+ const isElectionNavigationItem = ({ id, href, label }: FilterableNavLink) => {
+diff --git a/config/featureFlags.ts b/config/featureFlags.ts
+index fa44f0c..9e9c675 100644
+--- a/config/featureFlags.ts
++++ b/config/featureFlags.ts
+@@ -1,6 +1,10 @@
+ const env = typeof process !== 'undefined' ? process.env : undefined;
+ 
++const parseTrue = (value?: string) => (value ?? '').toLowerCase() === 'true';
++
+ export const FEATURE_FLAGS = {
+   ELECTION_ENABLED:
+-    (env?.NEXT_PUBLIC_ENABLE_ELECTIONS || env?.VITE_ENABLE_ELECTIONS || false),
++    parseTrue(env?.NEXT_PUBLIC_ENABLE_ELECTIONS) ||
++    parseTrue(env?.VITE_ENABLE_ELECTIONS) ||
++    false,
+ };
+diff --git a/lib/api.ts b/lib/api.ts
+index 7d3026d..7926e71 100644
+--- a/lib/api.ts
++++ b/lib/api.ts
+@@ -4,7 +4,15 @@ import { FEATURE_FLAGS } from '@/config/featureFlags';
+ const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+ const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
+ const ELECTION_DISABLED = !FEATURE_FLAGS.ELECTION_ENABLED;
+-const ELECTION_ENDPOINT_SEGMENTS = ['candidates', 'governorates', 'stats', 'analytics', 'poll', 'vote'];
++const ELECTION_ENDPOINT_SEGMENTS = [
++  'candidates',
++  'governorates',
++  'stats',
++  'analytics',
++  'poll',
++  'vote',
++  'election',
++];
+ const DISABLED_API_RESPONSE = { disabled: true } as const;
+ 
+ const isElectionEndpoint = (endpoint: string) =>

@@ -1,12 +1,13 @@
 export type FilterableNavLink = { id?: string; href?: string; label?: string };
 
-const ELECTION_ROUTE_SEGMENTS = [
+export const ELECTION_ROUTE_SEGMENTS = [
   'candidates',
   'governorates',
   'stats',
   'analytics',
   'poll',
   'vote',
+  'election',
 ];
 
 const isElectionNavigationItem = ({ id, href, label }: FilterableNavLink) => {
