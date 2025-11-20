@@ -4,6 +4,11 @@ import { FEATURE_FLAGS } from '@/config/featureFlags';
 const PRIMARY_API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const BACKUP_API_URL = process.env.NEXT_PUBLIC_BACKUP_API;
 const ELECTION_DISABLED = !FEATURE_FLAGS.ELECTION_ENABLED;
+const ELECTION_ENDPOINT_SEGMENTS = ['candidates', 'governorates', 'stats', 'analytics', 'poll', 'vote'];
+const DISABLED_API_RESPONSE = { disabled: true } as const;
+
+const isElectionEndpoint = (endpoint: string) =>
+  ELECTION_ENDPOINT_SEGMENTS.some((segment) => endpoint.toLowerCase().includes(segment));
 
 const DISABLED_POLL: Poll = {
   id: 'polls-disabled',
@@ -122,6 +127,9 @@ async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
+  if (ELECTION_DISABLED && isElectionEndpoint(endpoint)) {
+    return Promise.resolve(DISABLED_API_RESPONSE as T);
+  }
   // This function is updated to allow options (like `cache: 'no-store'`) to override defaults.
   // FIX: Refactored fetchOptions creation to avoid duplicate 'headers' property key.
   const { headers, ...otherOptions } = options;

@@ -1,9 +1,8 @@
 export type FilterableNavLink = { id?: string; href?: string; label?: string };
 
 const ELECTION_ROUTE_SEGMENTS = [
-  'election',
-  'candidate',
-  'governorate',
+  'candidates',
+  'governorates',
   'stats',
   'analytics',
   'poll',
